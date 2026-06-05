@@ -1,9 +1,11 @@
 import type { DealEvaluationRequest, DealEvaluationResponse } from "../types/deals";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
+
 export async function evaluateDeal(
   request: DealEvaluationRequest
 ): Promise<DealEvaluationResponse> {
-  const response = await fetch("/api/deals/evaluate", {
+  const response = await fetch(`${API_BASE_URL}/api/deals/evaluate`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

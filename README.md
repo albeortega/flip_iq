@@ -66,3 +66,5 @@ npm run dev
 ```
 
 Vite proxies `/api` requests to `http://localhost:8080`, so the home page can call the Spring Boot deal evaluation endpoint during local development.
+
+For Vercel deployments, set `VITE_API_BASE_URL` to the deployed API origin, for example `https://api.example.com`. The Vite dev proxy is only used locally.
