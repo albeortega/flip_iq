@@ -31,14 +31,19 @@ class DealEvaluationControllerTest {
 	void returnsEvaluationForValidRequest() throws Exception {
 		when(dealEvaluationService.evaluate(any())).thenReturn(new DealEvaluationResponse(
 				"123 Main Street",
+				new BigDecimal("90000.00"),
 				new BigDecimal("250000.00"),
 				new BigDecimal("0.70"),
 				new BigDecimal("175000.00"),
 				new BigDecimal("35000.00"),
 				new BigDecimal("15000.00"),
+				new BigDecimal("15000.00"),
+				new BigDecimal("7000.00"),
 				new BigDecimal("25000.00"),
-				new BigDecimal("100000.00"),
-				new BigDecimal("100000.00"),
+				new BigDecimal("162000.00"),
+				new BigDecimal("93000.00"),
+				new BigDecimal("88000.00"),
+				new BigDecimal("3000.00"),
 				"REVIEW"));
 
 		mockMvc.perform(post("/api/deals/evaluate")
@@ -46,14 +51,18 @@ class DealEvaluationControllerTest {
 						.content("""
 								{
 								  "propertyAddress": "123 Main Street",
+								  "purchasePrice": 90000,
 								  "afterRepairValue": 250000,
-								  "repairCosts": 35000,
-								  "holdingAndSellingCosts": 15000,
+								  "rehabCosts": 35000,
+								  "financingCosts": 15000,
+								  "holdingCosts": 15000,
+								  "sellingCosts": 7000,
 								  "profitBuffer": 25000
 								}
 								"""))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.maximumOffer").value(100000.00))
+				.andExpect(jsonPath("$.maximumOffer").value(93000.00))
+				.andExpect(jsonPath("$.projectedProfit").value(88000.00))
 				.andExpect(jsonPath("$.recommendation").value("REVIEW"));
 	}
 

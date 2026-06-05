@@ -13,35 +13,47 @@ public class DealEvaluationService {
 	private static final int MONEY_SCALE = 2;
 
 	public DealEvaluationResponse evaluate(DealEvaluationRequest request) {
+		BigDecimal purchasePrice = money(request.purchasePrice());
 		BigDecimal afterRepairValue = money(request.afterRepairValue());
-		BigDecimal repairCosts = money(request.repairCosts());
-		BigDecimal holdingAndSellingCosts = money(request.holdingAndSellingCosts());
+		BigDecimal rehabCosts = money(request.rehabCosts());
+		BigDecimal financingCosts = money(request.financingCosts());
+		BigDecimal holdingCosts = money(request.holdingCosts());
+		BigDecimal sellingCosts = money(request.sellingCosts());
 		BigDecimal profitBuffer = money(request.profitBuffer());
 		BigDecimal ruleValue = money(afterRepairValue.multiply(OFFER_RULE_PERCENTAGE));
 		BigDecimal maximumOffer = money(ruleValue
-				.subtract(repairCosts)
-				.subtract(holdingAndSellingCosts)
+				.subtract(rehabCosts)
+				.subtract(holdingCosts)
+				.subtract(sellingCosts)
 				.subtract(profitBuffer));
-		BigDecimal estimatedSpread = money(afterRepairValue
-				.subtract(maximumOffer)
-				.subtract(repairCosts)
-				.subtract(holdingAndSellingCosts));
+		BigDecimal totalProjectCost = money(purchasePrice
+				.add(rehabCosts)
+				.add(financingCosts)
+				.add(holdingCosts)
+				.add(sellingCosts));
+		BigDecimal projectedProfit = money(afterRepairValue.subtract(totalProjectCost));
+		BigDecimal offerSpread = money(maximumOffer.subtract(purchasePrice));
 
 		return new DealEvaluationResponse(
 				request.propertyAddress(),
+				purchasePrice,
 				afterRepairValue,
 				OFFER_RULE_PERCENTAGE,
 				ruleValue,
-				repairCosts,
-				holdingAndSellingCosts,
+				rehabCosts,
+				financingCosts,
+				holdingCosts,
+				sellingCosts,
 				profitBuffer,
+				totalProjectCost,
 				maximumOffer,
-				estimatedSpread,
-				recommendation(maximumOffer));
+				projectedProfit,
+				offerSpread,
+				recommendation(maximumOffer, purchasePrice, projectedProfit));
 	}
 
-	private String recommendation(BigDecimal maximumOffer) {
-		if (maximumOffer.signum() <= 0) {
+	private String recommendation(BigDecimal maximumOffer, BigDecimal purchasePrice, BigDecimal projectedProfit) {
+		if (maximumOffer.signum() <= 0 || purchasePrice.compareTo(maximumOffer) > 0 || projectedProfit.signum() <= 0) {
 			return "PASS";
 		}
 		return "REVIEW";
