@@ -6,19 +6,23 @@ FlipIQ is a real estate investment analyzer that helps users evaluate property d
 FlipIQ currently evaluates fix-and-flip deals with the 70% rule:
 
 ```text
-Maximum offer = after-repair value x 70% - repair costs - holding/selling costs - profit buffer
+Maximum offer = after-repair value x 70% - rehab costs - holding costs - selling costs - profit buffer
 ```
 
 Example:
 
 | Item | Amount |
 | --- | ---: |
+| Purchase price | $90,000 |
 | After-repair value | $250,000 |
 | 70% rule value | $175,000 |
-| Repairs | -$35,000 |
-| Holding/selling costs | -$15,000 |
+| Rehab costs | -$35,000 |
+| Financing costs | -$8,000 |
+| Holding costs | -$15,000 |
+| Cost of sale | -$7,000 |
 | Profit buffer | -$25,000 |
-| Maximum offer | $100,000 |
+| Maximum offer | $93,000 |
+| Projected profit at purchase price | $95,000 |
 
 ## Run Locally
 
@@ -42,9 +46,12 @@ curl -X POST http://localhost:8080/api/deals/evaluate \
   -H "Content-Type: application/json" \
   -d '{
     "propertyAddress": "123 Main Street",
+    "purchasePrice": 90000,
     "afterRepairValue": 250000,
-    "repairCosts": 35000,
-    "holdingAndSellingCosts": 15000,
+    "rehabCosts": 35000,
+    "financingCosts": 8000,
+    "holdingCosts": 15000,
+    "sellingCosts": 7000,
     "profitBuffer": 25000
   }'
 ```
@@ -52,7 +59,7 @@ curl -X POST http://localhost:8080/api/deals/evaluate \
 Expected `maximumOffer`:
 
 ```json
-100000.00
+93000.00
 ```
 
 ## Front End

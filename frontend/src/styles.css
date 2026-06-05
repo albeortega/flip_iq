@@ -321,6 +321,25 @@ body {
   white-space: nowrap;
 }
 
+.field-help {
+  display: inline-grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 1px solid rgba(18, 63, 54, 0.28);
+  border-radius: 999px;
+  color: #123f36;
+  background: #fff9ef;
+  cursor: help;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.field-help:focus-visible {
+  outline: 2px solid #f27a2d;
+  outline-offset: 2px;
+}
+
 .submit-button {
   min-height: 50px;
 }
