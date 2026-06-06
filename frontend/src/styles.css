@@ -42,6 +42,10 @@ body {
   padding-bottom: 56px;
 }
 
+.page-stack {
+  gap: 24px;
+}
+
 .hero-band,
 .deal-panel,
 .insight-card {
@@ -440,32 +444,45 @@ body {
     padding: 12px 10px 28px;
   }
 
+  .page-stack {
+    gap: 18px;
+  }
+
   .top-bar {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 12px;
-    padding: 0 2px 16px;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 0 2px 12px;
   }
 
   .top-bar .nav-links {
     display: none !important;
   }
 
-  .top-bar > a,
-  .top-bar > button {
-    min-height: 44px;
-    padding-right: 14px;
-    padding-left: 14px;
+  .top-bar .MuiButton-root {
+    width: 100%;
+    min-height: 48px;
+    padding-right: 16px;
+    padding-left: 16px;
+    border-color: var(--prime-deep);
+    color: var(--prime-taupe);
+    background: var(--prime-deep);
     font-size: 0.88rem;
   }
 
+  .top-bar .MuiButton-root:hover {
+    border-color: var(--prime-navy);
+    background: var(--prime-navy);
+  }
+
   .brand-lockup {
+    justify-content: center;
     padding: 0;
   }
 
   .brand-logo {
-    width: min(52vw, 230px);
-    height: 58px;
-    object-position: left center;
+    width: min(78vw, 320px);
+    height: 82px;
+    object-position: center;
   }
 
   .hero-band {

@@ -317,7 +317,7 @@ export default function App() {
   return (
     <Box component="main" className="app-shell">
       <Container maxWidth="xl" className="page-container">
-        <Stack spacing={3}>
+        <Stack spacing={3} className="page-stack">
           <Box className="top-bar">
             <Box className="brand-lockup" aria-label="FlipIQ">
               <Box component="img" src={flipIqLogo} alt="FlipIQ" className="brand-logo" />
