@@ -152,10 +152,28 @@ body {
 }
 
 .deal-panel .MuiInputBase-input,
-.insight-card .MuiInputBase-input,
+.insight-card .MuiInputBase-input {
+  color: var(--prime-ink);
+}
+
 .deal-panel .MuiFormLabel-root,
 .insight-card .MuiFormLabel-root {
-  color: var(--prime-ink);
+  color: var(--prime-taupe);
+}
+
+.deal-panel .MuiFormLabel-root.Mui-focused,
+.deal-panel .MuiFormLabel-root.MuiInputLabel-shrink,
+.insight-card .MuiFormLabel-root.Mui-focused,
+.insight-card .MuiFormLabel-root.MuiInputLabel-shrink {
+  color: var(--prime-taupe);
+}
+
+.deal-panel .MuiFormLabel-root.MuiInputLabel-shrink,
+.insight-card .MuiFormLabel-root.MuiInputLabel-shrink {
+  padding-right: 4px;
+  padding-left: 4px;
+  border-radius: 4px;
+  background: var(--prime-navy);
 }
 
 .deal-panel .MuiOutlinedInput-notchedOutline,
