@@ -1,21 +1,29 @@
 export type DealEvaluationRequest = {
   propertyAddress: string;
+  purchasePrice: number;
   afterRepairValue: number;
-  repairCosts: number;
-  holdingAndSellingCosts: number;
+  rehabCosts: number;
+  financingCosts: number;
+  holdingCosts: number;
+  sellingCosts: number;
   profitBuffer: number;
 };
 
 export type DealEvaluationResponse = {
   propertyAddress: string;
+  purchasePrice: number;
   afterRepairValue: number;
   offerRulePercentage: number;
   ruleValue: number;
-  repairCosts: number;
-  holdingAndSellingCosts: number;
+  rehabCosts: number;
+  financingCosts: number;
+  holdingCosts: number;
+  sellingCosts: number;
   profitBuffer: number;
+  totalProjectCost: number;
   maximumOffer: number;
-  estimatedSpread: number;
+  projectedProfit: number;
+  offerSpread: number;
   recommendation: "PASS" | "REVIEW" | string;
   purchasePrice?: number;
   projectedProfit?: number;
