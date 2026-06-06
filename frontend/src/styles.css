@@ -1,6 +1,25 @@
+:root {
+  --prime-ink: #20332f;
+  --prime-deep: #17362f;
+  --prime-forest: #31564d;
+  --prime-sage: #dfe8df;
+  --prime-sage-soft: #f2f6f0;
+  --prime-ivory: #fbf7ef;
+  --prime-warm: #f3eadb;
+  --prime-card: #fffdf8;
+  --prime-gold: #c7a567;
+  --prime-gold-dark: #a88445;
+  --prime-muted: #6d746d;
+  --prime-line: rgba(49, 64, 56, 0.14);
+  --prime-line-soft: rgba(49, 64, 56, 0.09);
+  --prime-shadow: rgba(32, 51, 47, 0.07);
+  --prime-danger: #b75b55;
+  --prime-danger-soft: #fff3f1;
+}
+
 html {
   min-width: 320px;
-  background: #f4f6f8;
+  background: var(--prime-ivory);
 }
 
 body {
@@ -9,10 +28,11 @@ body {
 
 .app-shell {
   min-height: 100vh;
-  color: #17211f;
+  color: var(--prime-ink);
   background:
-    linear-gradient(180deg, rgba(23, 109, 100, 0.08), rgba(244, 246, 248, 0) 360px),
-    #f4f6f8;
+    linear-gradient(180deg, rgba(199, 165, 103, 0.18), rgba(251, 247, 239, 0) 340px),
+    linear-gradient(135deg, rgba(49, 86, 77, 0.1), rgba(243, 234, 219, 0.35)),
+    var(--prime-ivory);
 }
 
 .page-container {
@@ -24,9 +44,9 @@ body {
 .hero-band,
 .deal-panel,
 .insight-card {
-  border: 1px solid rgba(23, 33, 31, 0.12);
+  border: 1px solid var(--prime-line);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 253, 248, 0.94);
 }
 
 .top-bar {
@@ -44,7 +64,7 @@ body {
   place-items: center;
   border-radius: 8px;
   color: #ffffff;
-  background: #176d64;
+  background: var(--prime-forest);
   font-weight: 900;
 }
 
@@ -58,7 +78,7 @@ body {
 }
 
 .nav-links p {
-  color: #5d6b66;
+  color: var(--prime-muted);
   font-size: 0.9rem;
   font-weight: 750;
 }
@@ -72,7 +92,7 @@ body {
 }
 
 .hero-title {
-  color: #12201c;
+  color: var(--prime-ink);
 }
 
 .lede {
@@ -100,7 +120,7 @@ body {
 .deal-panel,
 .insight-card {
   padding: 22px;
-  box-shadow: 0 12px 34px rgba(23, 33, 31, 0.05);
+  box-shadow: 0 12px 34px var(--prime-shadow);
 }
 
 .deal-panel {
@@ -113,7 +133,7 @@ body {
 }
 
 .eyebrow {
-  color: #b45309;
+  color: var(--prime-gold-dark);
   font-size: 0.75rem;
   font-weight: 900;
   letter-spacing: 0.08em;
@@ -122,7 +142,7 @@ body {
 
 .field-label {
   margin-bottom: 7px;
-  color: #5d6b66;
+  color: var(--prime-muted);
   font-size: 0.78rem;
   font-weight: 700;
 }
@@ -145,40 +165,40 @@ body {
 }
 
 .inline-total {
-  color: #17211f;
+  color: var(--prime-ink);
   font-weight: 850;
 }
 
 .metric,
 .result-metric {
   min-height: 76px;
-  border: 1px solid rgba(23, 33, 31, 0.1);
+  border: 1px solid var(--prime-line-soft);
   border-radius: 8px;
   padding: 11px 12px;
-  background: #ffffff;
+  background: var(--prime-card);
 }
 
 .metric p:last-child,
 .result-metric p:last-child {
   overflow-wrap: anywhere;
-  color: #17211f;
+  color: var(--prime-ink);
   font-size: 1.08rem;
   font-weight: 900;
 }
 
 .metric-green {
-  border-color: rgba(23, 109, 100, 0.28);
-  background: #edf8f4;
+  border-color: rgba(49, 86, 77, 0.28);
+  background: var(--prime-sage-soft);
 }
 
 .metric-yellow {
-  border-color: rgba(180, 83, 9, 0.28);
-  background: #fff8eb;
+  border-color: rgba(199, 165, 103, 0.36);
+  background: #fbf1dc;
 }
 
 .metric-red {
-  border-color: rgba(185, 28, 28, 0.24);
-  background: #fff1f0;
+  border-color: rgba(183, 91, 85, 0.26);
+  background: var(--prime-danger-soft);
 }
 
 .section-alert,
@@ -193,31 +213,31 @@ body {
   height: 82px;
   flex: 0 0 auto;
   place-items: center;
-  border: 7px solid #176d64;
+  border: 7px solid var(--prime-forest);
   border-radius: 50%;
-  color: #17211f;
-  background: #ffffff;
+  color: var(--prime-ink);
+  background: var(--prime-card);
   font-size: 1.55rem;
   font-weight: 950;
 }
 
 .score-green .score-ring {
-  border-color: #176d64;
+  border-color: var(--prime-forest);
 }
 
 .score-yellow .score-ring {
-  border-color: #b45309;
+  border-color: var(--prime-gold-dark);
 }
 
 .score-red .score-ring {
-  border-color: #b91c1c;
+  border-color: var(--prime-danger);
 }
 
 .risk-bar {
   height: 10px;
   overflow: hidden;
   border-radius: 999px;
-  background: #e4e8ea;
+  background: var(--prime-warm);
 }
 
 .risk-bar span {
@@ -228,17 +248,17 @@ body {
 
 .risk-green span {
   width: 34%;
-  background: #176d64;
+  background: var(--prime-forest);
 }
 
 .risk-yellow span {
   width: 66%;
-  background: #b45309;
+  background: var(--prime-gold-dark);
 }
 
 .risk-red span {
   width: 100%;
-  background: #b91c1c;
+  background: var(--prime-danger);
 }
 
 .scenario-table {
@@ -246,13 +266,13 @@ body {
   grid-template-columns: minmax(0, 1fr) minmax(110px, 0.55fr) minmax(80px, 0.4fr);
   gap: 0;
   overflow: hidden;
-  border: 1px solid rgba(23, 33, 31, 0.1);
+  border: 1px solid var(--prime-line-soft);
   border-radius: 8px;
 }
 
 .scenario-table p {
   padding: 10px 12px;
-  border-bottom: 1px solid rgba(23, 33, 31, 0.08);
+  border-bottom: 1px solid var(--prime-line-soft);
 }
 
 .scenario-row {
@@ -260,8 +280,8 @@ body {
 }
 
 .scenario-table p:nth-child(-n + 3) {
-  color: #5d6b66;
-  background: #f4f6f8;
+  color: var(--prime-muted);
+  background: var(--prime-warm);
   font-size: 0.82rem;
   font-weight: 850;
 }
@@ -287,9 +307,9 @@ body {
   gap: 10px;
   align-items: center;
   padding: 10px 12px;
-  border: 1px solid rgba(23, 33, 31, 0.1);
+  border: 1px solid var(--prime-line-soft);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--prime-card);
 }
 
 .deal-row p {
