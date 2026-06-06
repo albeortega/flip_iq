@@ -56,10 +56,10 @@ body {
 
 .top-bar {
   display: grid;
-  grid-template-columns: minmax(220px, auto) 1fr auto;
+  grid-template-columns: minmax(156px, auto) 1fr auto;
   align-items: center;
   gap: 28px;
-  padding: 8px 4px 20px;
+  padding: 0 4px 20px;
   border: 0;
   background: transparent;
 }
@@ -83,14 +83,19 @@ body {
   align-items: center;
   width: fit-content;
   min-width: 0;
-  padding: 6px 0;
+  padding: 0;
+  border-radius: 8px;
+  background: var(--prime-night);
+  box-shadow: 0 16px 40px rgba(3, 18, 53, 0.2);
 }
 
 .brand-logo {
   display: block;
-  width: clamp(210px, 22vw, 300px);
-  height: 70px;
-  object-fit: contain;
+  width: clamp(142px, 13vw, 172px);
+  aspect-ratio: 1;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
 }
 
 .nav-links {
@@ -477,11 +482,12 @@ body {
   .brand-lockup {
     justify-content: center;
     padding: 0;
+    margin: 0 auto;
   }
 
   .brand-logo {
-    width: min(78vw, 320px);
-    height: 82px;
+    width: min(58vw, 220px);
+    height: auto;
     object-position: center;
   }
 

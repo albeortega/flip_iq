@@ -12,7 +12,7 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { analyzeDealWithAi, evaluateDeal } from "./api/deals";
-import flipIqLogo from "./assets/flipiq-logo-nav.png";
+import flipIqLogo from "./assets/flipiq-logo-primary.jpeg";
 import type {
   AiDealReviewResponse,
   DealEvaluationRequest,
