@@ -1,8 +1,8 @@
 :root {
   --prime-ink: #2c2b2d;
-  --prime-deep: #080814;
-  --prime-navy: #050511;
-  --prime-night: #03030b;
+  --prime-deep: #061944;
+  --prime-navy: #031235;
+  --prime-night: #020a21;
   --prime-ivory: #fbfaf8;
   --prime-card: #ffffff;
   --prime-panel: #f7f4ef;
@@ -11,9 +11,9 @@
   --prime-gold: #b9a56f;
   --prime-muted: #726d69;
   --prime-muted-on-dark: #c8c0b8;
-  --prime-line: rgba(8, 8, 20, 0.12);
-  --prime-line-soft: rgba(8, 8, 20, 0.08);
-  --prime-shadow: rgba(8, 8, 20, 0.12);
+  --prime-line: rgba(3, 18, 53, 0.16);
+  --prime-line-soft: rgba(3, 18, 53, 0.1);
+  --prime-shadow: rgba(3, 18, 53, 0.16);
   --prime-danger: #b75b55;
   --prime-danger-soft: #fff3f1;
   --prime-success: #314d42;
@@ -56,23 +56,20 @@ body {
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 24px;
-  padding: 12px 14px;
+  padding: 10px 14px;
 }
 
-.brand-icon {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  place-items: center;
-  border-radius: 8px;
-  color: #ffffff;
-  background: var(--prime-deep);
-  font-weight: 900;
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  min-width: 0;
 }
 
-.brand-mark {
-  font-size: 1.08rem;
-  font-weight: 900;
+.brand-logo {
+  display: block;
+  width: clamp(132px, 16vw, 190px);
+  height: 48px;
+  object-fit: contain;
 }
 
 .nav-links {
@@ -91,9 +88,9 @@ body {
   gap: 20px;
   align-items: center;
   padding: 22px;
-  border-color: rgba(8, 8, 20, 0.92);
+  border-color: rgba(3, 18, 53, 0.92);
   background: var(--prime-navy);
-  box-shadow: 0 22px 70px rgba(8, 8, 20, 0.18);
+  box-shadow: 0 22px 70px rgba(3, 18, 53, 0.2);
 }
 
 .hero-title {
@@ -130,6 +127,40 @@ body {
 .insight-card {
   padding: 22px;
   box-shadow: 0 12px 34px var(--prime-shadow);
+}
+
+.deal-panel.MuiPaper-root,
+.insight-card.MuiPaper-root {
+  border-color: rgba(214, 203, 192, 0.18);
+  color: var(--prime-taupe);
+  background: var(--prime-navy);
+}
+
+.deal-panel .MuiTypography-root,
+.insight-card .MuiTypography-root {
+  color: inherit;
+}
+
+.deal-panel .MuiTypography-colorTextSecondary,
+.insight-card .MuiTypography-colorTextSecondary {
+  color: var(--prime-muted-on-dark);
+}
+
+.deal-panel .MuiInputBase-root,
+.insight-card .MuiInputBase-root {
+  background: var(--prime-card);
+}
+
+.deal-panel .MuiInputBase-input,
+.insight-card .MuiInputBase-input,
+.deal-panel .MuiFormLabel-root,
+.insight-card .MuiFormLabel-root {
+  color: var(--prime-ink);
+}
+
+.deal-panel .MuiOutlinedInput-notchedOutline,
+.insight-card .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(214, 203, 192, 0.24);
 }
 
 .deal-panel {
@@ -187,6 +218,13 @@ body {
   background: var(--prime-card);
 }
 
+.deal-panel .result-metric,
+.insight-card .result-metric,
+.deal-panel .metric,
+.insight-card .metric {
+  background: rgba(255, 255, 255, 0.96);
+}
+
 .hero-metrics .metric {
   border-color: rgba(214, 203, 192, 0.22);
   background: rgba(214, 203, 192, 0.1);
@@ -206,6 +244,13 @@ body {
   color: var(--prime-ink);
   font-size: 1.08rem;
   font-weight: 900;
+}
+
+.deal-panel .result-metric p,
+.insight-card .result-metric p,
+.deal-panel .metric p,
+.insight-card .metric p {
+  color: var(--prime-ink);
 }
 
 .metric-green {
@@ -235,7 +280,7 @@ body {
   height: 82px;
   flex: 0 0 auto;
   place-items: center;
-  border: 7px solid var(--prime-deep);
+  border: 7px solid var(--prime-taupe);
   border-radius: 50%;
   color: var(--prime-ink);
   background: var(--prime-card);
@@ -288,8 +333,9 @@ body {
   grid-template-columns: minmax(0, 1fr) minmax(110px, 0.55fr) minmax(80px, 0.4fr);
   gap: 0;
   overflow: hidden;
-  border: 1px solid var(--prime-line-soft);
+  border: 1px solid rgba(214, 203, 192, 0.18);
   border-radius: 8px;
+  background: var(--prime-card);
 }
 
 .scenario-table p {
@@ -332,6 +378,10 @@ body {
   border: 1px solid var(--prime-line-soft);
   border-radius: 8px;
   background: var(--prime-card);
+}
+
+.deal-row p {
+  color: var(--prime-ink);
 }
 
 .deal-row p {

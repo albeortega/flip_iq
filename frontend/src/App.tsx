@@ -12,6 +12,7 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { analyzeDealWithAi, evaluateDeal } from "./api/deals";
+import flipIqLogo from "./assets/flipiq-logo-nav.png";
 import type {
   AiDealReviewResponse,
   DealEvaluationRequest,
@@ -318,10 +319,9 @@ export default function App() {
       <Container maxWidth="xl" className="page-container">
         <Stack spacing={3}>
           <Box className="top-bar">
-            <Stack direction="row" spacing={1.25} alignItems="center">
-              <Box className="brand-icon">F</Box>
-              <Typography className="brand-mark">FlipIQ</Typography>
-            </Stack>
+            <Box className="brand-lockup" aria-label="FlipIQ">
+              <Box component="img" src={flipIqLogo} alt="FlipIQ" className="brand-logo" />
+            </Box>
             <Stack component="nav" direction="row" spacing={2.25} className="nav-links">
               <Typography>Analyzer</Typography>
               <Typography>Comps</Typography>
