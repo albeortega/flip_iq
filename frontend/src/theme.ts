@@ -4,22 +4,22 @@ export const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#31564d",
-      dark: "#17362f",
+      main: "#080814",
+      dark: "#03030b",
       contrastText: "#ffffff"
     },
     secondary: {
-      main: "#c7a567",
-      dark: "#a88445",
-      contrastText: "#20332f"
+      main: "#d6cbc0",
+      dark: "#b9a99a",
+      contrastText: "#080814"
     },
     background: {
-      default: "#fbf7ef",
-      paper: "#fffdf8"
+      default: "#fbfaf8",
+      paper: "#ffffff"
     },
     text: {
-      primary: "#20332f",
-      secondary: "#6d746d"
+      primary: "#2c2b2d",
+      secondary: "#726d69"
     }
   },
   shape: {
