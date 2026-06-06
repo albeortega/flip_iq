@@ -121,8 +121,8 @@ body {
 
 .hero-title.MuiTypography-root {
   color: var(--prime-taupe);
-  font-size: clamp(2.05rem, 5vw, 4.25rem);
-  line-height: 1.02;
+  font-size: clamp(1.8rem, 3vw, 2.25rem);
+  line-height: 1.12;
   letter-spacing: 0;
 }
 
@@ -254,6 +254,49 @@ body {
 .inline-total {
   color: var(--prime-ink);
   font-weight: 850;
+}
+
+.deal-panel .inline-total {
+  color: var(--prime-taupe);
+}
+
+.deal-panel .rehab-actions .MuiButton-root,
+.deal-panel .form-actions .MuiButton-root {
+  color: #ffffff;
+  font-weight: 850;
+}
+
+.deal-panel .rehab-actions .MuiButton-outlined,
+.deal-panel .form-actions .MuiButton-outlined {
+  border-color: rgba(255, 255, 255, 0.58);
+}
+
+.deal-panel .rehab-actions .MuiButton-outlined:hover,
+.deal-panel .form-actions .MuiButton-outlined:hover {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.deal-panel .form-actions .MuiButton-contained {
+  background: #0b63d8;
+}
+
+.deal-panel .form-actions .MuiButton-contained:hover {
+  background: #084fb2;
+}
+
+.deal-panel .form-actions .MuiButton-text:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.deal-panel .rehab-actions .MuiButton-root.Mui-disabled,
+.deal-panel .form-actions .MuiButton-root.Mui-disabled {
+  border-color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.deal-panel .form-actions .MuiButton-contained.Mui-disabled {
+  background: rgba(11, 99, 216, 0.42);
 }
 
 .metric,
@@ -458,7 +501,7 @@ body {
   }
 
   .hero-title.MuiTypography-root {
-    font-size: clamp(1.85rem, 6vw, 3rem);
+    font-size: clamp(1.65rem, 4.8vw, 2.1rem);
   }
 
   .lede {
@@ -522,8 +565,8 @@ body {
   }
 
   .hero-title.MuiTypography-root {
-    font-size: clamp(1.65rem, 8vw, 2.15rem);
-    line-height: 1.08;
+    font-size: clamp(1.5rem, 6vw, 1.75rem);
+    line-height: 1.14;
   }
 
   .lede {
