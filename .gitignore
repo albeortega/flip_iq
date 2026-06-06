@@ -1,43 +1,25 @@
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-
-### IntelliJ IDEA ###
-.idea/
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-### VS Code ###
-.vscode/
-
-### Front end ###
+### Dependencies ###
+node_modules/
 frontend/node_modules/
+
+### Build output ###
+build/
+dist/
 frontend/dist/
 frontend/.vite/
 frontend/*.tsbuildinfo
+
+### Logs ###
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+### IDEs ###
+.idea/
+.vscode/
+*.iws
+*.iml
+*.ipr
+
+### OS ###
+.DS_Store

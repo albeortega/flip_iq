@@ -5,7 +5,6 @@
   "scripts": {
     "build": "npm --prefix frontend run build",
     "dev": "npm --prefix frontend run dev",
-    "frontend:install": "npm --prefix frontend install",
-    "test": "./gradlew test"
+    "frontend:install": "npm --prefix frontend install"
   }
 }
