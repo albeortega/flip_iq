@@ -122,74 +122,74 @@ const rehabCategories = [
 ];
 
 const initialFormState: DealFormState = {
-  propertyAddress: "123 Main Street",
-  purchasePrice: "210000",
-  afterRepairValue: "350000",
-  maoRulePercentage: "70",
-  holdingAndSellingCosts: "22000",
-  profitBuffer: "25000",
-  financingType: "Hard Money Loan",
-  downPaymentPercentage: "20",
-  interestRate: "11",
-  loanTermMonths: "12",
-  points: "2",
-  holdingMonths: "6",
-  monthlyRent: "2800",
-  propertyTax: "430",
-  insurance: "240",
-  hoa: "0",
-  maintenance: "160",
-  vacancyRate: "5",
-  propertyManagementFee: "8",
-  subjectSquareFeet: "1750",
-  floridaPropertyTaxes: "4200",
-  floridaInsurance: "2800",
-  floridaHoa: "0",
-  realtorCommissionPercentage: "6",
-  titleFees: "1800",
-  transferTaxes: "2450",
-  floodInsurance: "0",
-  permitCosts: "1200"
+  propertyAddress: "",
+  purchasePrice: "",
+  afterRepairValue: "",
+  maoRulePercentage: "",
+  holdingAndSellingCosts: "",
+  profitBuffer: "",
+  financingType: "Cash",
+  downPaymentPercentage: "",
+  interestRate: "",
+  loanTermMonths: "",
+  points: "",
+  holdingMonths: "",
+  monthlyRent: "",
+  propertyTax: "",
+  insurance: "",
+  hoa: "",
+  maintenance: "",
+  vacancyRate: "",
+  propertyManagementFee: "",
+  subjectSquareFeet: "",
+  floridaPropertyTaxes: "",
+  floridaInsurance: "",
+  floridaHoa: "",
+  realtorCommissionPercentage: "",
+  titleFees: "",
+  transferTaxes: "",
+  floodInsurance: "",
+  permitCosts: ""
 };
 
 const initialRehabItems: RehabItem[] = [
-  { id: 1, category: "Kitchen", estimatedCost: "15000" },
-  { id: 2, category: "Bathrooms", estimatedCost: "8000" },
-  { id: 3, category: "Flooring", estimatedCost: "7000" },
-  { id: 4, category: "Paint", estimatedCost: "4000" },
-  { id: 5, category: "Contingency", estimatedCost: "6000" }
+  { id: 1, category: "Kitchen", estimatedCost: "" },
+  { id: 2, category: "Bathrooms", estimatedCost: "" },
+  { id: 3, category: "Flooring", estimatedCost: "" },
+  { id: 4, category: "Paint", estimatedCost: "" },
+  { id: 5, category: "Contingency", estimatedCost: "" }
 ];
 
 const initialComps: CompItem[] = [
   {
     id: 1,
-    address: "18 Oak Terrace",
-    salePrice: "342000",
-    squareFeet: "1680",
-    distanceMiles: "0.4",
-    soldDate: "2026-03-12",
-    bedrooms: "3",
-    bathrooms: "2"
+    address: "",
+    salePrice: "",
+    squareFeet: "",
+    distanceMiles: "",
+    soldDate: "",
+    bedrooms: "",
+    bathrooms: ""
   },
   {
     id: 2,
-    address: "55 Pine Loop",
-    salePrice: "365000",
-    squareFeet: "1810",
-    distanceMiles: "0.7",
-    soldDate: "2026-04-02",
-    bedrooms: "3",
-    bathrooms: "2"
+    address: "",
+    salePrice: "",
+    squareFeet: "",
+    distanceMiles: "",
+    soldDate: "",
+    bedrooms: "",
+    bathrooms: ""
   },
   {
     id: 3,
-    address: "90 Lakeview Drive",
-    salePrice: "336000",
-    squareFeet: "1725",
-    distanceMiles: "0.9",
-    soldDate: "2026-02-18",
-    bedrooms: "3",
-    bathrooms: "2"
+    address: "",
+    salePrice: "",
+    squareFeet: "",
+    distanceMiles: "",
+    soldDate: "",
+    bedrooms: "",
+    bathrooms: ""
   }
 ];
 
@@ -469,7 +469,7 @@ export default function App() {
                       onClick={() =>
                         setRehabItems((current) => [
                           ...current,
-                          { id: Date.now(), category: "Other", estimatedCost: "0" }
+                          { id: Date.now(), category: "Other", estimatedCost: "" }
                         ])
                       }
                     >
@@ -925,12 +925,12 @@ function CompsPanel({
               {
                 id: Date.now(),
                 address: "",
-                salePrice: "0",
-                squareFeet: "0",
-                distanceMiles: "0",
+                salePrice: "",
+                squareFeet: "",
+                distanceMiles: "",
                 soldDate: "",
-                bedrooms: "0",
-                bathrooms: "0"
+                bedrooms: "",
+                bathrooms: ""
               }
             ])
           }
