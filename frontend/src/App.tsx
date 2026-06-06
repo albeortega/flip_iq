@@ -334,10 +334,11 @@ export default function App() {
 
           <Box className="hero-band">
             <Box>
-              <Typography variant="h1">FlipIQ Deal Desk</Typography>
+              <Typography variant="h1" className="hero-title">
+                Deal Analyzer
+              </Typography>
               <Typography color="text.secondary" className="lede">
-                Model MAO, rehab, financing, rental fallback, comps, risk, and investor-ready
-                deal scoring from one worksheet.
+                Model MAO, rehab, financing, rental fallback, comps, and risk in one worksheet.
               </Typography>
             </Box>
             <Box className="hero-metrics">
@@ -352,6 +353,7 @@ export default function App() {
               <Stack
                 component="form"
                 spacing={3}
+                className="deal-form-stack"
                 onSubmit={handleSubmit}
                 noValidate
                 aria-label="Deal evaluation form"
@@ -455,7 +457,12 @@ export default function App() {
                       </Button>
                     </Box>
                   ))}
-                  <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "center" }}>
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={1.5}
+                    alignItems={{ sm: "center" }}
+                    className="rehab-actions"
+                  >
                     <Button
                       type="button"
                       variant="outlined"
@@ -640,7 +647,7 @@ export default function App() {
                   />
                 </Box>
 
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} className="form-actions">
                   <Button
                     type="submit"
                     variant="contained"

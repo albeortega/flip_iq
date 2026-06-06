@@ -29,10 +29,10 @@ export const theme = createTheme({
     fontFamily:
       'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     h1: {
-      fontSize: "4.8rem",
+      fontSize: "3rem",
       fontWeight: 850,
       letterSpacing: 0,
-      lineHeight: 0.96
+      lineHeight: 1
     },
     h2: {
       fontSize: "1.5rem",

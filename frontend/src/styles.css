@@ -16,7 +16,7 @@ body {
 }
 
 .page-container {
-  padding-top: 24px;
+  padding-top: 18px;
   padding-bottom: 56px;
 }
 
@@ -34,7 +34,7 @@ body {
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 24px;
-  padding: 14px 16px;
+  padding: 12px 14px;
 }
 
 .brand-icon {
@@ -66,16 +66,20 @@ body {
 .hero-band {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
-  gap: 24px;
-  align-items: end;
-  padding: 28px;
+  gap: 20px;
+  align-items: center;
+  padding: 22px;
+}
+
+.hero-title {
+  color: #12201c;
 }
 
 .lede {
   max-width: 48rem;
-  margin-top: 10px;
-  font-size: 1.06rem;
-  line-height: 1.6;
+  margin-top: 8px;
+  font-size: 1rem;
+  line-height: 1.55;
 }
 
 .hero-metrics,
@@ -95,8 +99,8 @@ body {
 
 .deal-panel,
 .insight-card {
-  padding: 24px;
-  box-shadow: 0 18px 50px rgba(23, 33, 31, 0.06);
+  padding: 22px;
+  box-shadow: 0 12px 34px rgba(23, 33, 31, 0.05);
 }
 
 .deal-panel {
@@ -147,10 +151,10 @@ body {
 
 .metric,
 .result-metric {
-  min-height: 82px;
+  min-height: 76px;
   border: 1px solid rgba(23, 33, 31, 0.1);
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: 11px 12px;
   background: #ffffff;
 }
 
@@ -158,7 +162,7 @@ body {
 .result-metric p:last-child {
   overflow-wrap: anywhere;
   color: #17211f;
-  font-size: 1.18rem;
+  font-size: 1.08rem;
   font-weight: 900;
 }
 
@@ -306,27 +310,74 @@ body {
 
 @media (max-width: 760px) {
   .page-container {
-    padding-top: 14px;
-    padding-bottom: 34px;
+    padding: 10px 10px 28px;
   }
 
   .top-bar {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    padding: 10px 12px;
   }
 
-  .nav-links {
-    justify-content: flex-start;
-    overflow-x: auto;
+  .top-bar .nav-links {
+    display: none !important;
   }
 
-  .hero-band,
+  .top-bar > a,
+  .top-bar > button {
+    min-height: 38px;
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .hero-band {
+    gap: 14px;
+    padding: 12px;
+  }
+
+  .hero-title {
+    font-size: 1.42rem;
+    line-height: 1.08;
+  }
+
+  .lede {
+    margin-top: 5px;
+    font-size: 0.9rem;
+    line-height: 1.42;
+  }
+
+  .hero-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .hero-metrics .metric {
+    min-height: 66px;
+    padding: 9px 8px;
+  }
+
+  .hero-metrics .metric p:first-child {
+    font-size: 0.72rem;
+  }
+
+  .hero-metrics .metric p:last-child {
+    font-size: 0.92rem;
+  }
+
   .deal-panel,
   .insight-card {
-    padding: 18px;
+    padding: 14px;
+    box-shadow: none;
   }
 
-  .hero-metrics,
+  .deal-form-stack {
+    gap: 16px;
+  }
+
+  .deal-form-stack > .MuiStack-root:first-child {
+    gap: 2px;
+  }
+
   .field-grid,
   .result-grid,
   .editable-row,
@@ -335,7 +386,54 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .editable-row button {
+  .field-grid,
+  .result-grid {
+    gap: 10px;
+  }
+
+  .metric,
+  .result-metric {
+    min-height: 62px;
+    padding: 10px 11px;
+  }
+
+  .result-metric p:first-child {
+    font-size: 0.78rem;
+  }
+
+  .result-metric p:last-child {
+    font-size: 1rem;
+  }
+
+  .eyebrow {
+    font-size: 0.68rem;
+  }
+
+  .score-ring {
+    width: 68px;
+    height: 68px;
+    border-width: 6px;
+    font-size: 1.3rem;
+  }
+
+  .form-actions button {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .editable-row button,
+  .rehab-actions button,
+  .table-stack > button {
     justify-self: start;
+    min-height: 44px;
+  }
+
+  .scenario-table {
+    grid-template-columns: minmax(0, 1fr) minmax(88px, 0.7fr) minmax(58px, 0.45fr);
+  }
+
+  .scenario-table p {
+    padding: 9px 8px;
+    font-size: 0.86rem;
   }
 }
