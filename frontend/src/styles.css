@@ -1,20 +1,23 @@
 :root {
-  --prime-ink: #20332f;
-  --prime-deep: #17362f;
-  --prime-forest: #31564d;
-  --prime-sage: #dfe8df;
-  --prime-sage-soft: #f2f6f0;
-  --prime-ivory: #fbf7ef;
-  --prime-warm: #f3eadb;
-  --prime-card: #fffdf8;
-  --prime-gold: #c7a567;
-  --prime-gold-dark: #a88445;
-  --prime-muted: #6d746d;
-  --prime-line: rgba(49, 64, 56, 0.14);
-  --prime-line-soft: rgba(49, 64, 56, 0.09);
-  --prime-shadow: rgba(32, 51, 47, 0.07);
+  --prime-ink: #2c2b2d;
+  --prime-deep: #080814;
+  --prime-navy: #050511;
+  --prime-night: #03030b;
+  --prime-ivory: #fbfaf8;
+  --prime-card: #ffffff;
+  --prime-panel: #f7f4ef;
+  --prime-taupe: #d6cbc0;
+  --prime-taupe-dark: #b9a99a;
+  --prime-gold: #b9a56f;
+  --prime-muted: #726d69;
+  --prime-muted-on-dark: #c8c0b8;
+  --prime-line: rgba(8, 8, 20, 0.12);
+  --prime-line-soft: rgba(8, 8, 20, 0.08);
+  --prime-shadow: rgba(8, 8, 20, 0.12);
   --prime-danger: #b75b55;
   --prime-danger-soft: #fff3f1;
+  --prime-success: #314d42;
+  --prime-success-soft: #eef3ee;
 }
 
 html {
@@ -30,8 +33,7 @@ body {
   min-height: 100vh;
   color: var(--prime-ink);
   background:
-    linear-gradient(180deg, rgba(199, 165, 103, 0.18), rgba(251, 247, 239, 0) 340px),
-    linear-gradient(135deg, rgba(49, 86, 77, 0.1), rgba(243, 234, 219, 0.35)),
+    linear-gradient(180deg, #ffffff 0%, var(--prime-ivory) 520px),
     var(--prime-ivory);
 }
 
@@ -46,7 +48,7 @@ body {
 .insight-card {
   border: 1px solid var(--prime-line);
   border-radius: 8px;
-  background: rgba(255, 253, 248, 0.94);
+  background: rgba(255, 255, 255, 0.96);
 }
 
 .top-bar {
@@ -64,7 +66,7 @@ body {
   place-items: center;
   border-radius: 8px;
   color: #ffffff;
-  background: var(--prime-forest);
+  background: var(--prime-deep);
   font-weight: 900;
 }
 
@@ -89,10 +91,13 @@ body {
   gap: 20px;
   align-items: center;
   padding: 22px;
+  border-color: rgba(8, 8, 20, 0.92);
+  background: var(--prime-navy);
+  box-shadow: 0 22px 70px rgba(8, 8, 20, 0.18);
 }
 
 .hero-title {
-  color: var(--prime-ink);
+  color: var(--prime-taupe);
 }
 
 .lede {
@@ -100,6 +105,10 @@ body {
   margin-top: 8px;
   font-size: 1rem;
   line-height: 1.55;
+}
+
+.hero-band .lede {
+  color: var(--prime-muted-on-dark);
 }
 
 .hero-metrics,
@@ -133,7 +142,7 @@ body {
 }
 
 .eyebrow {
-  color: var(--prime-gold-dark);
+  color: var(--prime-gold);
   font-size: 0.75rem;
   font-weight: 900;
   letter-spacing: 0.08em;
@@ -178,6 +187,19 @@ body {
   background: var(--prime-card);
 }
 
+.hero-metrics .metric {
+  border-color: rgba(214, 203, 192, 0.22);
+  background: rgba(214, 203, 192, 0.1);
+}
+
+.hero-metrics .metric p:first-child {
+  color: var(--prime-muted-on-dark);
+}
+
+.hero-metrics .metric p:last-child {
+  color: var(--prime-taupe);
+}
+
 .metric p:last-child,
 .result-metric p:last-child {
   overflow-wrap: anywhere;
@@ -187,13 +209,13 @@ body {
 }
 
 .metric-green {
-  border-color: rgba(49, 86, 77, 0.28);
-  background: var(--prime-sage-soft);
+  border-color: rgba(49, 77, 66, 0.24);
+  background: var(--prime-success-soft);
 }
 
 .metric-yellow {
-  border-color: rgba(199, 165, 103, 0.36);
-  background: #fbf1dc;
+  border-color: rgba(185, 165, 111, 0.34);
+  background: #fbf4e6;
 }
 
 .metric-red {
@@ -213,7 +235,7 @@ body {
   height: 82px;
   flex: 0 0 auto;
   place-items: center;
-  border: 7px solid var(--prime-forest);
+  border: 7px solid var(--prime-deep);
   border-radius: 50%;
   color: var(--prime-ink);
   background: var(--prime-card);
@@ -222,11 +244,11 @@ body {
 }
 
 .score-green .score-ring {
-  border-color: var(--prime-forest);
+  border-color: var(--prime-success);
 }
 
 .score-yellow .score-ring {
-  border-color: var(--prime-gold-dark);
+  border-color: var(--prime-gold);
 }
 
 .score-red .score-ring {
@@ -237,7 +259,7 @@ body {
   height: 10px;
   overflow: hidden;
   border-radius: 999px;
-  background: var(--prime-warm);
+  background: var(--prime-panel);
 }
 
 .risk-bar span {
@@ -248,12 +270,12 @@ body {
 
 .risk-green span {
   width: 34%;
-  background: var(--prime-forest);
+  background: var(--prime-success);
 }
 
 .risk-yellow span {
   width: 66%;
-  background: var(--prime-gold-dark);
+  background: var(--prime-gold);
 }
 
 .risk-red span {
@@ -281,7 +303,7 @@ body {
 
 .scenario-table p:nth-child(-n + 3) {
   color: var(--prime-muted);
-  background: var(--prime-warm);
+  background: var(--prime-panel);
   font-size: 0.82rem;
   font-weight: 850;
 }
