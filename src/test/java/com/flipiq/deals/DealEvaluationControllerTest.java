@@ -71,6 +71,8 @@ class DealEvaluationControllerTest {
 		mockMvc.perform(post("/api/deals/evaluate")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("{}"))
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").value("Deal evaluation request is invalid."))
+				.andExpect(jsonPath("$.errors").isArray());
 	}
 }
