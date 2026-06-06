@@ -4,22 +4,22 @@ export const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#123f36",
-      dark: "#0b2b25",
+      main: "#080814",
+      dark: "#03030b",
       contrastText: "#ffffff"
     },
     secondary: {
-      main: "#f27a2d",
-      dark: "#c95f1e",
-      contrastText: "#1b120b"
+      main: "#d6cbc0",
+      dark: "#b9a99a",
+      contrastText: "#080814"
     },
     background: {
-      default: "#f6efe2",
+      default: "#fbfaf8",
       paper: "#ffffff"
     },
     text: {
-      primary: "#12201c",
-      secondary: "#64736d"
+      primary: "#2c2b2d",
+      secondary: "#726d69"
     }
   },
   shape: {
@@ -29,10 +29,10 @@ export const theme = createTheme({
     fontFamily:
       'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     h1: {
-      fontSize: "4.8rem",
+      fontSize: "3rem",
       fontWeight: 850,
       letterSpacing: 0,
-      lineHeight: 0.96
+      lineHeight: 1
     },
     h2: {
       fontSize: "1.5rem",
