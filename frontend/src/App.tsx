@@ -1306,9 +1306,12 @@ function isNonNegativeNumber(value: string): boolean {
 function toRequest(form: DealFormState, analysis: DealAnalysis): DealEvaluationRequest {
   return {
     propertyAddress: form.propertyAddress.trim(),
+    purchasePrice: toNumber(form.purchasePrice),
     afterRepairValue: toNumber(form.afterRepairValue),
-    repairCosts: analysis.repairCosts,
-    holdingAndSellingCosts: toNumber(form.holdingAndSellingCosts) + analysis.totalFinancingCost,
+    rehabCosts: analysis.repairCosts,
+    financingCosts: analysis.totalFinancingCost,
+    holdingCosts: toNumber(form.holdingAndSellingCosts),
+    sellingCosts: 0,
     profitBuffer: toNumber(form.profitBuffer)
   };
 }

@@ -25,8 +25,6 @@ export type DealEvaluationResponse = {
   projectedProfit: number;
   offerSpread: number;
   recommendation: "PASS" | "REVIEW" | string;
-  purchasePrice?: number;
-  projectedProfit?: number;
   maximumAllowableOffer?: number;
   dealScore?: number;
   scoreGrade?: string;
