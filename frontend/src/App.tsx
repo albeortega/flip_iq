@@ -222,9 +222,8 @@ export default function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
 
-  const validationError = useMemo(() => getValidationError(form, rehabItems, comps), [form, rehabItems, comps]);
   const analysis = useMemo(() => calculateAnalysis(form, rehabItems, comps), [form, rehabItems, comps]);
-  const canSubmit = !validationError && !isSubmitting;
+  const canSubmit = !isSubmitting;
   const dashboardSummary = useMemo(() => getDashboardSummary(savedDeals), [savedDeals]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
