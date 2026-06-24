@@ -13,7 +13,9 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { analyzeDealWithAi, evaluateDeal } from "./api/deals";
 import flipIqLogo from "./assets/flipiq-logo-primary.jpeg";
+import AddressSearchInput from "./components/AddressSearchInput";
 import type {
+  AddressDetails,
   AiDealReviewResponse,
   DealEvaluationRequest,
   DealEvaluationResponse
@@ -75,6 +77,18 @@ type DealFormState = {
   transferTaxes: string;
   floodInsurance: string;
   permitCosts: string;
+  googlePlaceId: string;
+  formattedAddress: string;
+  streetNumber: string;
+  route: string;
+  city: string;
+  county: string;
+  state: string;
+  stateCode: string;
+  zipCode: string;
+  country: string;
+  latitude: string;
+  longitude: string;
 };
 
 type DealAnalysis = {
@@ -149,7 +163,19 @@ const initialFormState: DealFormState = {
   titleFees: "",
   transferTaxes: "",
   floodInsurance: "",
-  permitCosts: ""
+  permitCosts: "",
+  googlePlaceId: "",
+  formattedAddress: "",
+  streetNumber: "",
+  route: "",
+  city: "",
+  county: "",
+  state: "",
+  stateCode: "",
+  zipCode: "",
+  country: "",
+  latitude: "",
+  longitude: ""
 };
 
 const initialRehabItems: RehabItem[] = [
@@ -313,6 +339,25 @@ export default function App() {
     URL.revokeObjectURL(url);
   }
 
+  function handleAddressSelected(address: AddressDetails) {
+    setForm((current) => ({
+      ...current,
+      propertyAddress: address.formattedAddress || current.propertyAddress,
+      googlePlaceId: address.placeId,
+      formattedAddress: address.formattedAddress,
+      streetNumber: address.streetNumber ?? "",
+      route: address.route ?? "",
+      city: address.city ?? "",
+      county: address.county ?? "",
+      state: address.state ?? "",
+      stateCode: address.stateCode ?? "",
+      zipCode: address.zipCode ?? "",
+      country: address.country ?? "",
+      latitude: address.latitude?.toString() ?? "",
+      longitude: address.longitude?.toString() ?? ""
+    }));
+  }
+
   return (
     <Box component="main" className="app-shell">
       <Container maxWidth="xl" className="page-container">
@@ -360,13 +405,27 @@ export default function App() {
                 <SectionHeader eyebrow="Deal worksheet" title="Property and offer inputs" />
                 {error ? <Alert severity="error">{error}</Alert> : null}
 
-                <TextField
-                  label="Property address"
+                <AddressSearchInput
                   value={form.propertyAddress}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, propertyAddress: event.target.value }))
+                  onInputChange={(value) =>
+                    setForm((current) => ({
+                      ...current,
+                      propertyAddress: value,
+                      googlePlaceId: "",
+                      formattedAddress: "",
+                      streetNumber: "",
+                      route: "",
+                      city: "",
+                      county: "",
+                      state: "",
+                      stateCode: "",
+                      zipCode: "",
+                      country: "",
+                      latitude: "",
+                      longitude: ""
+                    }))
                   }
-                  fullWidth
+                  onAddressSelected={handleAddressSelected}
                 />
 
                 <Box className="field-grid">
