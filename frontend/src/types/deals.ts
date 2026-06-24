@@ -48,3 +48,23 @@ export type AiDealReviewResponse = {
   warnings: string[];
   recommendation: string;
 };
+
+export type AddressSuggestion = {
+  placeId: string;
+  description: string;
+};
+
+export type AddressDetails = {
+  placeId: string;
+  formattedAddress: string;
+  streetNumber: string | null;
+  route: string | null;
+  city: string | null;
+  county: string | null;
+  state: string | null;
+  stateCode: string | null;
+  zipCode: string | null;
+  country: string | null;
+  latitude: number | null;
+  longitude: number | null;
+};
