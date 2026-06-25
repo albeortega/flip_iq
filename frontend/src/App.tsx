@@ -19,16 +19,6 @@ import type {
   EnrichedPropertyResponse
 } from "./types/deals";
 
-type SavedDeal = {
-  id: number;
-  propertyAddress: string;
-  purchasePrice: number;
-  projectedProfit: number;
-  roi: number;
-  dealScore: number;
-  riskLevel: string;
-};
-
 type DealFormState = {
   propertyAddress: string;
   purchasePrice: string;
@@ -118,13 +108,6 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0
 });
 
-const compactCurrencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  maximumFractionDigits: 0,
-  notation: "compact"
-});
-
 const numberFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 1
 });
@@ -133,7 +116,6 @@ export default function App() {
   const [form, setForm] = useState<DealFormState>(initialFormState);
   const [result, setResult] = useState<DealEvaluationResponse | null>(null);
   const [aiReview, setAiReview] = useState<AiDealReviewResponse | null>(null);
-  const [savedDeals, setSavedDeals] = useState<SavedDeal[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [aiError, setAiError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -141,7 +123,6 @@ export default function App() {
 
   const analysis = useMemo(() => calculateAnalysis(form), [form]);
   const canSubmit = !isSubmitting;
-  const dashboardSummary = useMemo(() => getDashboardSummary(savedDeals), [savedDeals]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -158,18 +139,6 @@ export default function App() {
     try {
       const response = await evaluateDeal(toRequest(form, analysis));
       setResult(response);
-      setSavedDeals((current) => [
-        {
-          id: Date.now(),
-          propertyAddress: form.propertyAddress.trim() || "Untitled deal",
-          purchasePrice: toNumber(form.purchasePrice),
-          projectedProfit: analysis.projectedProfit,
-          roi: analysis.roi,
-          dealScore: analysis.dealScore,
-          riskLevel: analysis.riskLevel
-        },
-        ...current
-      ]);
     } catch (caughtError) {
       setResult(null);
       setError(caughtError instanceof Error ? caughtError.message : "Unexpected error.");
@@ -271,7 +240,6 @@ export default function App() {
             <Stack component="nav" direction="row" spacing={2.25} className="nav-links">
               <Typography>Analyzer</Typography>
               <Typography>Comps</Typography>
-              <Typography>Dashboard</Typography>
             </Stack>
             <Button variant="outlined" href="#deal-form">
               New Analysis
@@ -447,7 +415,6 @@ export default function App() {
               <ResultPanel result={result} analysis={analysis} />
               <SensitivityPanel analysis={analysis} />
               <AiReviewPanel review={aiReview} error={aiError} />
-              <DashboardPanel summary={dashboardSummary} savedDeals={savedDeals} />
             </Stack>
           </Box>
         </Stack>
@@ -647,56 +614,6 @@ function AiReviewPanel({
       ) : (
         <Typography color="text.secondary">Run Analyze This Deal to generate the review.</Typography>
       )}
-    </Paper>
-  );
-}
-
-function DashboardPanel({
-  summary,
-  savedDeals
-}: {
-  summary: {
-    totalDealsAnalyzed: number;
-    averageROI: number;
-    averageProjectedProfit: number;
-    bestDeal: SavedDeal | null;
-    highestDealScore: number;
-  };
-  savedDeals: SavedDeal[];
-}) {
-  return (
-    <Paper elevation={0} className="insight-card">
-      <SectionHeader eyebrow="Portfolio Dashboard" title="Session deal comparison" />
-      <Box className="result-grid">
-        <ResultMetric label="Total deals analyzed" value={String(summary.totalDealsAnalyzed)} />
-        <ResultMetric label="Average ROI" value={`${numberFormatter.format(summary.averageROI)}%`} />
-        <ResultMetric
-          label="Average profit"
-          value={currencyFormatter.format(summary.averageProjectedProfit)}
-        />
-        <ResultMetric
-          label="Highest score"
-          value={summary.highestDealScore ? String(summary.highestDealScore) : "No deals"}
-        />
-      </Box>
-      <Box className="deal-table">
-        {savedDeals.length === 0 ? (
-          <Typography color="text.secondary">Evaluated deals will appear here.</Typography>
-        ) : (
-          savedDeals.slice(0, 5).map((deal) => (
-            <Box className="deal-row" key={deal.id}>
-              <Typography>{deal.propertyAddress}</Typography>
-              <Typography>{compactCurrencyFormatter.format(deal.purchasePrice)}</Typography>
-              <Typography>{compactCurrencyFormatter.format(deal.projectedProfit)}</Typography>
-              <Typography>{numberFormatter.format(deal.roi)}%</Typography>
-              <Chip label={deal.riskLevel} size="small" />
-            </Box>
-          ))
-        )}
-      </Box>
-      {summary.bestDeal ? (
-        <Typography color="text.secondary">Best deal: {summary.bestDeal.propertyAddress}</Typography>
-      ) : null}
     </Paper>
   );
 }
@@ -911,25 +828,6 @@ function toRequest(form: DealFormState, analysis: DealAnalysis): DealEvaluationR
     holdingCosts: toNumber(form.holdingAndSellingCosts),
     sellingCosts: 0,
     profitBuffer: toNumber(form.profitBuffer)
-  };
-}
-
-function getDashboardSummary(savedDeals: SavedDeal[]) {
-  const totalDealsAnalyzed = savedDeals.length;
-  const bestDeal = savedDeals.reduce<SavedDeal | null>(
-    (best, deal) => (!best || deal.dealScore > best.dealScore ? deal : best),
-    null
-  );
-  return {
-    totalDealsAnalyzed,
-    averageROI: totalDealsAnalyzed
-      ? savedDeals.reduce((total, deal) => total + deal.roi, 0) / totalDealsAnalyzed
-      : 0,
-    averageProjectedProfit: totalDealsAnalyzed
-      ? savedDeals.reduce((total, deal) => total + deal.projectedProfit, 0) / totalDealsAnalyzed
-      : 0,
-    bestDeal,
-    highestDealScore: bestDeal?.dealScore ?? 0
   };
 }
 
