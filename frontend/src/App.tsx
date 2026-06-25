@@ -752,6 +752,18 @@ function FlipOpportunityCard({
           <ResultMetric label="Price Drop" value={formatCurrencyValue(property.priceDropAmount)} />
         </Box>
 
+        <Box className="opportunity-detail-grid">
+          <ResultMetric label="Days on Market" value={formatNumberValue(property.daysOnMarket)} />
+          <ResultMetric label="Listed Date" value={property.listedDate ?? "N/A"} />
+          <ResultMetric label="MLS" value={formatMls(property)} />
+          <ResultMetric label="Listing Type" value={property.listingType ?? "N/A"} />
+          <ResultMetric label="HOA Fee" value={formatCurrencyValue(property.hoaFee)} />
+          <ResultMetric label="Lot Size" value={formatAreaValue(property.lotSize)} />
+          <ResultMetric label="History Events" value={formatNumberValue(property.historyEventCount)} />
+          <ResultMetric label="Agent" value={property.listingAgentName ?? "N/A"} />
+          <ResultMetric label="Office" value={property.listingOfficeName ?? "N/A"} />
+        </Box>
+
         <Stack spacing={0.6}>
           <Typography className="summary-title">Highlights</Typography>
           {property.highlights.map((highlight) => (
@@ -1227,6 +1239,18 @@ function formatCurrencyValue(value: number | null): string {
 
 function formatPercentValue(value: number | null): string {
   return value == null ? "N/A" : `${numberFormatter.format(value)}%`;
+}
+
+function formatNumberValue(value: number | null): string {
+  return value == null ? "N/A" : numberFormatter.format(value);
+}
+
+function formatAreaValue(value: number | null): string {
+  return value == null ? "N/A" : `${numberFormatter.format(value)} sqft`;
+}
+
+function formatMls(property: FlipOpportunityProperty): string {
+  return [property.mlsName, property.mlsNumber].filter(Boolean).join(" #") || "N/A";
 }
 
 function toOptionalString(value: number | null): string {
