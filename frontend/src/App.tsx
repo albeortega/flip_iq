@@ -337,46 +337,40 @@ export default function App() {
                   <CurrencyField
                     label="Estimated value"
                     value={form.estimatedValue}
-                    onChange={(value) =>
-                      setForm((current) => ({
-                        ...current,
-                        estimatedValue: value,
-                        afterRepairValue: value || current.afterRepairValue
-                      }))
-                    }
+                    readOnly
                   />
                   <CurrencyField
                     label="Last sale price"
                     value={form.lastSalePrice}
-                    onChange={(value) => setForm((current) => ({ ...current, lastSalePrice: value }))}
+                    readOnly
                   />
                   <TextField
                     label="Last sale date"
                     type="date"
                     value={form.lastSaleDate}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, lastSaleDate: event.target.value }))
-                    }
-                    slotProps={{ inputLabel: { shrink: true } }}
+                    slotProps={{
+                      htmlInput: { readOnly: true },
+                      inputLabel: { shrink: true }
+                    }}
                     fullWidth
                   />
                   <NumberField
                     label="Bedrooms"
                     value={form.bedrooms}
                     suffix="beds"
-                    onChange={(value) => setForm((current) => ({ ...current, bedrooms: value }))}
+                    readOnly
                   />
                   <NumberField
                     label="Bathrooms"
                     value={form.bathrooms}
                     suffix="baths"
-                    onChange={(value) => setForm((current) => ({ ...current, bathrooms: value }))}
+                    readOnly
                   />
                   <NumberField
                     label="Living area"
                     value={form.livingArea}
                     suffix="sq ft"
-                    onChange={(value) => setForm((current) => ({ ...current, livingArea: value }))}
+                    readOnly
                   />
                 </Box>
 
@@ -428,22 +422,24 @@ function CurrencyField({
   label,
   value,
   min = "0",
-  onChange
+  onChange,
+  readOnly = false
 }: {
   label: string;
   value: string;
   min?: string;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
+  readOnly?: boolean;
 }) {
   return (
     <TextField
       label={label}
       value={value}
-      onChange={(event) => onChange(event.target.value)}
+      onChange={(event) => onChange?.(event.target.value)}
       type="number"
-      slotProps={{ htmlInput: { min, step: "0.01" } }}
+      slotProps={{ htmlInput: { min, readOnly, step: "0.01" } }}
       fullWidth
-      required
+      required={!readOnly}
     />
   );
 }
@@ -452,22 +448,24 @@ function NumberField({
   label,
   value,
   suffix,
-  onChange
+  onChange,
+  readOnly = false
 }: {
   label: string;
   value: string;
   suffix: string;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
+  readOnly?: boolean;
 }) {
   return (
     <TextField
       label={`${label} (${suffix})`}
       value={value}
-      onChange={(event) => onChange(event.target.value)}
+      onChange={(event) => onChange?.(event.target.value)}
       type="number"
-      slotProps={{ htmlInput: { min: "0", step: "0.01" } }}
+      slotProps={{ htmlInput: { min: "0", readOnly, step: "0.01" } }}
       fullWidth
-      required
+      required={!readOnly}
     />
   );
 }
