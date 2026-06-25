@@ -163,11 +163,39 @@ body {
   grid-template-columns: minmax(0, 760px);
 }
 
-.analysis-entry-grid {
+.analysis-entry-stack {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(180px, 0.55fr);
   gap: 14px;
-  align-items: start;
+}
+
+.analysis-mode-toggle.MuiToggleButtonGroup-root {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(100%, 420px);
+  border: 1px solid rgba(214, 203, 192, 0.34);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.analysis-mode-toggle .MuiToggleButton-root {
+  min-height: 44px;
+  border: 0;
+  border-radius: 0;
+  color: var(--prime-taupe);
+  font-weight: 850;
+  text-transform: none;
+}
+
+.analysis-mode-toggle .MuiToggleButton-root.Mui-selected,
+.analysis-mode-toggle .MuiToggleButton-root.Mui-selected:hover {
+  color: var(--prime-ink);
+  background: var(--prime-taupe);
+}
+
+.zip-continue-button.MuiButton-root {
+  min-width: 140px;
+  min-height: 56px;
 }
 
 .deal-panel,

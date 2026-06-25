@@ -8,6 +8,8 @@ import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Typography from "@mui/material/Typography";
 import { analyzeDealWithAi, evaluateDeal } from "./api/deals";
 import flipIqLogo from "./assets/flipiq-logo-primary.jpeg";
@@ -44,6 +46,8 @@ type DealFormState = {
   latitude: string;
   longitude: string;
 };
+
+type AnalysisMode = "address" | "zip";
 
 type DealAnalysis = {
   repairCosts: number;
@@ -118,9 +122,13 @@ export default function App() {
   const [aiError, setAiError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [analysisMode, setAnalysisMode] = useState<AnalysisMode>("address");
+  const [zipAnalysisStarted, setZipAnalysisStarted] = useState(false);
 
   const analysis = useMemo(() => calculateAnalysis(form), [form]);
-  const hasAnalysisStarted = Boolean(form.formattedAddress);
+  const hasAddressAnalysis = Boolean(form.formattedAddress);
+  const hasAnalysisStarted = hasAddressAnalysis || zipAnalysisStarted;
+  const showPropertyAutofill = analysisMode === "address" && hasAddressAnalysis;
   const canSubmit = !isSubmitting;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -199,6 +207,8 @@ export default function App() {
     const estimatedValue = property.estimatedValue ?? property.zestimate;
     const livingArea = property.livingArea;
 
+    setAnalysisMode("address");
+    setZipAnalysisStarted(false);
     setForm((current) => ({
       ...current,
       propertyAddress: property.formattedAddress || property.address || current.propertyAddress,
@@ -234,9 +244,30 @@ export default function App() {
     setAiReview(null);
     setError(null);
     setAiError(null);
+    setAnalysisMode("address");
+    setZipAnalysisStarted(false);
+  }
+
+  function clearAnalysisOutputs() {
+    setResult(null);
+    setAiReview(null);
+    setError(null);
+    setAiError(null);
+  }
+
+  function handleAnalysisModeChange(_: unknown, nextMode: AnalysisMode | null) {
+    if (!nextMode || nextMode === analysisMode) {
+      return;
+    }
+
+    setAnalysisMode(nextMode);
+    setZipAnalysisStarted(false);
+    setForm(initialFormState);
+    clearAnalysisOutputs();
   }
 
   function handleAddressInputChange(value: string) {
+    setZipAnalysisStarted(false);
     setForm((current) => ({
       ...current,
       propertyAddress: value,
@@ -259,14 +290,12 @@ export default function App() {
       bathrooms: "",
       livingArea: ""
     }));
-    setResult(null);
-    setAiReview(null);
-    setError(null);
-    setAiError(null);
+    clearAnalysisOutputs();
   }
 
   function handleZipCodeChange(value: string) {
     const nextZipCode = value.replace(/\D/g, "").slice(0, 5);
+    setZipAnalysisStarted(false);
     setForm((current) => ({
       ...current,
       propertyAddress: "",
@@ -289,10 +318,16 @@ export default function App() {
       bathrooms: "",
       livingArea: ""
     }));
-    setResult(null);
-    setAiReview(null);
-    setError(null);
-    setAiError(null);
+    clearAnalysisOutputs();
+  }
+
+  function handleZipContinue() {
+    if (!isValidZipCode(form.zipCode)) {
+      return;
+    }
+
+    setZipAnalysisStarted(true);
+    clearAnalysisOutputs();
   }
 
   return (
@@ -338,23 +373,53 @@ export default function App() {
                 noValidate
                 aria-label="Deal evaluation form"
               >
-                <SectionHeader eyebrow="Deal worksheet" title="Property and offer inputs" />
+                <SectionHeader
+                  eyebrow="Deal worksheet"
+                  title={hasAnalysisStarted ? "Property and offer inputs" : "Start a new analysis"}
+                />
                 {error ? <Alert severity="error">{error}</Alert> : null}
 
-                <Box className="analysis-entry-grid">
-                  <AddressSearchInput
-                    value={form.propertyAddress}
-                    onInputChange={handleAddressInputChange}
-                    onPropertyEnriched={handlePropertyEnriched}
-                  />
-                  <TextField
-                    label="ZIP code"
-                    value={form.zipCode}
-                    onChange={(event) => handleZipCodeChange(event.target.value)}
-                    placeholder="Enter ZIP code"
-                    slotProps={{ htmlInput: { inputMode: "numeric", maxLength: 5 } }}
-                    fullWidth
-                  />
+                <Box className="analysis-entry-stack">
+                  <ToggleButtonGroup
+                    exclusive
+                    value={analysisMode}
+                    onChange={handleAnalysisModeChange}
+                    className="analysis-mode-toggle"
+                    aria-label="Analysis start method"
+                  >
+                    <ToggleButton value="address">Property address</ToggleButton>
+                    <ToggleButton value="zip">ZIP code</ToggleButton>
+                  </ToggleButtonGroup>
+
+                  {analysisMode === "address" ? (
+                    <AddressSearchInput
+                      value={form.propertyAddress}
+                      onInputChange={handleAddressInputChange}
+                      onPropertyEnriched={handlePropertyEnriched}
+                    />
+                  ) : (
+                    <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-start" }}>
+                      <TextField
+                        label="ZIP code"
+                        value={form.zipCode}
+                        onChange={(event) => handleZipCodeChange(event.target.value)}
+                        placeholder="Enter ZIP code"
+                        helperText="ZIP analysis will use manual worksheet inputs for now."
+                        slotProps={{ htmlInput: { inputMode: "numeric", maxLength: 5 } }}
+                        fullWidth
+                      />
+                      <Button
+                        type="button"
+                        variant="contained"
+                        size="large"
+                        className="zip-continue-button"
+                        disabled={!isValidZipCode(form.zipCode)}
+                        onClick={handleZipContinue}
+                      >
+                        Continue
+                      </Button>
+                    </Stack>
+                  )}
                 </Box>
 
                 {hasAnalysisStarted ? (
@@ -390,23 +455,25 @@ export default function App() {
                       />
                     </Box>
 
-                    <Box className="field-grid">
-                      <CurrencyField label="Estimated value" value={form.estimatedValue} readOnly />
-                      <CurrencyField label="Last sale price" value={form.lastSalePrice} readOnly />
-                      <TextField
-                        label="Last sale date"
-                        type="date"
-                        value={form.lastSaleDate}
-                        slotProps={{
-                          htmlInput: { readOnly: true },
-                          inputLabel: { shrink: true }
-                        }}
-                        fullWidth
-                      />
-                      <NumberField label="Bedrooms" value={form.bedrooms} suffix="beds" readOnly />
-                      <NumberField label="Bathrooms" value={form.bathrooms} suffix="baths" readOnly />
-                      <NumberField label="Living area" value={form.livingArea} suffix="sq ft" readOnly />
-                    </Box>
+                    {showPropertyAutofill ? (
+                      <Box className="field-grid">
+                        <CurrencyField label="Estimated value" value={form.estimatedValue} readOnly />
+                        <CurrencyField label="Last sale price" value={form.lastSalePrice} readOnly />
+                        <TextField
+                          label="Last sale date"
+                          type="date"
+                          value={form.lastSaleDate}
+                          slotProps={{
+                            htmlInput: { readOnly: true },
+                            inputLabel: { shrink: true }
+                          }}
+                          fullWidth
+                        />
+                        <NumberField label="Bedrooms" value={form.bedrooms} suffix="beds" readOnly />
+                        <NumberField label="Bathrooms" value={form.bathrooms} suffix="baths" readOnly />
+                        <NumberField label="Living area" value={form.livingArea} suffix="sq ft" readOnly />
+                      </Box>
+                    ) : null}
 
                     <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} className="form-actions">
                       <Button
@@ -825,8 +892,8 @@ function getRiskReasons({
 }
 
 function getValidationError(form: DealFormState): string | null {
-  if (!form.propertyAddress.trim()) {
-    return "Select a property address.";
+  if (!form.propertyAddress.trim() && !isValidZipCode(form.zipCode)) {
+    return "Select a property address or enter a valid ZIP code.";
   }
   if (!isPositiveNumber(form.afterRepairValue)) return "After-repair value must be greater than zero.";
   if (!isNonNegativeNumber(form.purchasePrice)) return "Purchase price must be zero or greater.";
@@ -847,9 +914,13 @@ function isNonNegativeNumber(value: string): boolean {
   return value.trim() !== "" && Number.isFinite(parsed) && parsed >= 0;
 }
 
+function isValidZipCode(value: string): boolean {
+  return /^\d{5}$/.test(value.trim());
+}
+
 function toRequest(form: DealFormState, analysis: DealAnalysis): DealEvaluationRequest {
   return {
-    propertyAddress: form.propertyAddress.trim(),
+    propertyAddress: form.propertyAddress.trim() || form.zipCode.trim(),
     purchasePrice: toNumber(form.purchasePrice),
     afterRepairValue: toNumber(form.afterRepairValue),
     rehabCosts: analysis.repairCosts,
