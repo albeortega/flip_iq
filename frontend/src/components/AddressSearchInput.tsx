@@ -2,13 +2,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
-import { autocompleteAddresses, getAddressDetails } from "../api/addresses";
-import type { AddressDetails, AddressSuggestion } from "../types/deals";
+import { autocompleteAddresses, enrichPropertyFromAddress } from "../api/addresses";
+import type { AddressSuggestion, EnrichedPropertyResponse } from "../types/deals";
 
 type AddressSearchInputProps = {
   value: string;
   onInputChange: (value: string) => void;
-  onAddressSelected: (address: AddressDetails) => void;
+  onPropertyEnriched: (property: EnrichedPropertyResponse) => void;
 };
 
 function createSessionToken() {
@@ -18,11 +18,12 @@ function createSessionToken() {
 export default function AddressSearchInput({
   value,
   onInputChange,
-  onAddressSelected
+  onPropertyEnriched
 }: AddressSearchInputProps) {
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState<AddressSuggestion | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isEnriching, setIsEnriching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const debounceRef = useRef<number | null>(null);
   const sessionTokenRef = useRef(createSessionToken());
@@ -88,17 +89,25 @@ export default function AddressSearchInput({
 
     onInputChange(suggestion.description);
     setSuggestions([]);
-    setIsLoading(true);
+    setIsEnriching(true);
     setError(null);
 
     try {
-      const details = await getAddressDetails(suggestion.placeId, sessionTokenRef.current);
-      onAddressSelected(details);
+      const property = await enrichPropertyFromAddress({
+        address: suggestion.description,
+        placeId: suggestion.placeId,
+        sessionToken: sessionTokenRef.current
+      });
+      setSelectedSuggestion({
+        ...suggestion,
+        description: property.formattedAddress || property.address || suggestion.description
+      });
+      onPropertyEnriched(property);
       sessionTokenRef.current = createSessionToken();
     } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "Address details failed.");
+      setError(caughtError instanceof Error ? caughtError.message : "Property data could not be loaded.");
     } finally {
-      setIsLoading(false);
+      setIsEnriching(false);
     }
   }
 
@@ -111,7 +120,7 @@ export default function AddressSearchInput({
       filterOptions={(options) => options}
       getOptionLabel={(option) => option.description}
       isOptionEqualToValue={(option, optionValue) => option.placeId === optionValue.placeId}
-      loading={isLoading}
+      loading={isLoading || isEnriching}
       noOptionsText={value.trim().length < 3 ? "Type at least 3 characters" : "No addresses found"}
       onChange={(_, nextSuggestion) => void handleSelection(nextSuggestion)}
       onInputChange={(_, nextValue, reason) => {
@@ -127,14 +136,14 @@ export default function AddressSearchInput({
           {...params}
           label="Property address"
           error={Boolean(error)}
-          helperText={error ?? " "}
+          helperText={error ?? (isEnriching ? "Loading property data..." : " ")}
           fullWidth
           slotProps={{
             input: {
               ...params.InputProps,
               endAdornment: (
                 <>
-                  {isLoading ? <CircularProgress color="inherit" size={18} /> : null}
+                  {isLoading || isEnriching ? <CircularProgress color="inherit" size={18} /> : null}
                   {params.InputProps.endAdornment}
                 </>
               )

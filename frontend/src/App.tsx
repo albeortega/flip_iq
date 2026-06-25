@@ -15,10 +15,10 @@ import { analyzeDealWithAi, evaluateDeal } from "./api/deals";
 import flipIqLogo from "./assets/flipiq-logo-primary.jpeg";
 import AddressSearchInput from "./components/AddressSearchInput";
 import type {
-  AddressDetails,
   AiDealReviewResponse,
   DealEvaluationRequest,
-  DealEvaluationResponse
+  DealEvaluationResponse,
+  EnrichedPropertyResponse
 } from "./types/deals";
 
 type RehabItem = {
@@ -77,6 +77,12 @@ type DealFormState = {
   transferTaxes: string;
   floodInsurance: string;
   permitCosts: string;
+  estimatedValue: string;
+  lastSalePrice: string;
+  lastSaleDate: string;
+  bedrooms: string;
+  bathrooms: string;
+  livingArea: string;
   googlePlaceId: string;
   formattedAddress: string;
   streetNumber: string;
@@ -164,6 +170,12 @@ const initialFormState: DealFormState = {
   transferTaxes: "",
   floodInsurance: "",
   permitCosts: "",
+  estimatedValue: "",
+  lastSalePrice: "",
+  lastSaleDate: "",
+  bedrooms: "",
+  bathrooms: "",
+  livingArea: "",
   googlePlaceId: "",
   formattedAddress: "",
   streetNumber: "",
@@ -339,22 +351,37 @@ export default function App() {
     URL.revokeObjectURL(url);
   }
 
-  function handleAddressSelected(address: AddressDetails) {
+  function handlePropertyEnriched(property: EnrichedPropertyResponse) {
+    const estimatedValue = property.estimatedValue ?? property.zestimate;
+    const livingArea = property.livingArea;
+
     setForm((current) => ({
       ...current,
-      propertyAddress: address.formattedAddress || current.propertyAddress,
-      googlePlaceId: address.placeId,
-      formattedAddress: address.formattedAddress,
-      streetNumber: address.streetNumber ?? "",
-      route: address.route ?? "",
-      city: address.city ?? "",
-      county: address.county ?? "",
-      state: address.state ?? "",
-      stateCode: address.stateCode ?? "",
-      zipCode: address.zipCode ?? "",
-      country: address.country ?? "",
-      latitude: address.latitude?.toString() ?? "",
-      longitude: address.longitude?.toString() ?? ""
+      propertyAddress: property.formattedAddress || property.address || current.propertyAddress,
+      afterRepairValue: estimatedValue == null ? current.afterRepairValue : String(estimatedValue),
+      purchasePrice:
+        property.lastSalePrice == null || current.purchasePrice
+          ? current.purchasePrice
+          : String(property.lastSalePrice),
+      subjectSquareFeet: livingArea == null ? current.subjectSquareFeet : String(livingArea),
+      estimatedValue: estimatedValue == null ? "" : String(estimatedValue),
+      lastSalePrice: property.lastSalePrice == null ? "" : String(property.lastSalePrice),
+      lastSaleDate: property.lastSaleDate ?? "",
+      bedrooms: property.bedrooms == null ? "" : String(property.bedrooms),
+      bathrooms: property.bathrooms == null ? "" : String(property.bathrooms),
+      livingArea: livingArea == null ? "" : String(livingArea),
+      googlePlaceId: property.placeId,
+      formattedAddress: property.formattedAddress,
+      streetNumber: property.streetNumber ?? "",
+      route: property.route ?? "",
+      city: property.city ?? "",
+      county: property.county ?? "",
+      state: property.state ?? "",
+      stateCode: property.stateCode ?? "",
+      zipCode: property.zipCode ?? "",
+      country: property.country ?? "",
+      latitude: property.latitude?.toString() ?? "",
+      longitude: property.longitude?.toString() ?? ""
     }));
   }
 
@@ -422,10 +449,16 @@ export default function App() {
                       zipCode: "",
                       country: "",
                       latitude: "",
-                      longitude: ""
+                      longitude: "",
+                      estimatedValue: "",
+                      lastSalePrice: "",
+                      lastSaleDate: "",
+                      bedrooms: "",
+                      bathrooms: "",
+                      livingArea: ""
                     }))
                   }
-                  onAddressSelected={handleAddressSelected}
+                  onPropertyEnriched={handlePropertyEnriched}
                 />
 
                 <Box className="field-grid">
@@ -467,6 +500,60 @@ export default function App() {
                     value={form.holdingMonths}
                     suffix="months"
                     onChange={(value) => setForm((current) => ({ ...current, holdingMonths: value }))}
+                  />
+                </Box>
+
+                <SectionHeader eyebrow="Property profile" title="RentCast autofill" />
+                <Box className="field-grid">
+                  <CurrencyField
+                    label="Estimated value"
+                    value={form.estimatedValue}
+                    onChange={(value) =>
+                      setForm((current) => ({
+                        ...current,
+                        estimatedValue: value,
+                        afterRepairValue: value || current.afterRepairValue
+                      }))
+                    }
+                  />
+                  <CurrencyField
+                    label="Last sale price"
+                    value={form.lastSalePrice}
+                    onChange={(value) => setForm((current) => ({ ...current, lastSalePrice: value }))}
+                  />
+                  <TextField
+                    label="Last sale date"
+                    type="date"
+                    value={form.lastSaleDate}
+                    onChange={(event) =>
+                      setForm((current) => ({ ...current, lastSaleDate: event.target.value }))
+                    }
+                    slotProps={{ inputLabel: { shrink: true } }}
+                    fullWidth
+                  />
+                  <NumberField
+                    label="Bedrooms"
+                    value={form.bedrooms}
+                    suffix="beds"
+                    onChange={(value) => setForm((current) => ({ ...current, bedrooms: value }))}
+                  />
+                  <NumberField
+                    label="Bathrooms"
+                    value={form.bathrooms}
+                    suffix="baths"
+                    onChange={(value) => setForm((current) => ({ ...current, bathrooms: value }))}
+                  />
+                  <NumberField
+                    label="Living area"
+                    value={form.livingArea}
+                    suffix="sq ft"
+                    onChange={(value) =>
+                      setForm((current) => ({
+                        ...current,
+                        livingArea: value,
+                        subjectSquareFeet: value || current.subjectSquareFeet
+                      }))
+                    }
                   />
                 </Box>
 

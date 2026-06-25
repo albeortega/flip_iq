@@ -1,4 +1,4 @@
-import type { AddressDetails, AddressSuggestion } from "../types/deals";
+import type { AddressDetails, AddressSuggestion, EnrichedPropertyResponse } from "../types/deals";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
@@ -36,6 +36,26 @@ export async function getAddressDetails(
   }
 
   return response.json() as Promise<AddressDetails>;
+}
+
+export async function enrichPropertyFromAddress(params: {
+  address: string;
+  placeId?: string;
+  sessionToken?: string;
+}): Promise<EnrichedPropertyResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/properties/enrich`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(params)
+  });
+
+  if (!response.ok) {
+    throw new Error(await getAddressErrorMessage(response, "Property enrichment failed."));
+  }
+
+  return response.json() as Promise<EnrichedPropertyResponse>;
 }
 
 async function getAddressErrorMessage(response: Response, fallback: string): Promise<string> {
