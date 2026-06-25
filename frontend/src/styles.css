@@ -373,26 +373,6 @@ body {
   background: rgba(255, 255, 255, 0.08);
 }
 
-.opportunity-filter-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
-  gap: 10px;
-  align-items: start;
-}
-
-.opportunity-filter-button.MuiButton-root {
-  min-width: 136px;
-  min-height: 56px;
-  border-color: rgba(255, 255, 255, 0.58);
-  color: #ffffff;
-  font-weight: 850;
-}
-
-.opportunity-filter-button.MuiButton-root:hover {
-  border-color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
-}
-
 .flip-opportunity-card {
   padding: 16px;
   border: 1px solid rgba(214, 203, 192, 0.18);
@@ -747,7 +727,6 @@ body {
   .field-grid,
   .result-grid,
   .opportunity-metrics,
-  .opportunity-filter-grid,
   .editable-row,
   .comp-row {
     grid-template-columns: 1fr;

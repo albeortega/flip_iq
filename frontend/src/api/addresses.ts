@@ -67,28 +67,12 @@ export async function enrichPropertyFromAddress(params: {
 export async function searchFlipOpportunities(params: {
   zipCode: string;
   sort?: FlipOpportunitySort;
-  limit?: number;
-  minProfit?: number;
-  minRoi?: number;
-  minDiscount?: number;
 }): Promise<FlipOpportunityResponse> {
   const searchParams = new URLSearchParams({
     zipCode: params.zipCode
   });
   if (params.sort) {
     searchParams.set("sort", params.sort);
-  }
-  if (params.limit) {
-    searchParams.set("limit", String(params.limit));
-  }
-  if (params.minProfit != null) {
-    searchParams.set("minProfit", String(params.minProfit));
-  }
-  if (params.minRoi != null) {
-    searchParams.set("minRoi", String(params.minRoi));
-  }
-  if (params.minDiscount != null) {
-    searchParams.set("minDiscount", String(params.minDiscount));
   }
 
   const response = await fetch(`${API_BASE_URL}/api/properties/flip-opportunities?${searchParams.toString()}`);
