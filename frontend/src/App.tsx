@@ -340,7 +340,6 @@ export default function App() {
                   />
                 </Box>
 
-                <SectionHeader eyebrow="Property profile" title="RentCast autofill" />
                 <Box className="field-grid">
                   <CurrencyField
                     label="Estimated value"
