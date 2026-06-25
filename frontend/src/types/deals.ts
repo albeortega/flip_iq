@@ -77,3 +77,53 @@ export type EnrichedPropertyResponse = AddressDetails & {
   bathrooms?: number | null;
   livingArea?: number | null;
 };
+
+export type FlipOpportunitySort =
+  | "BEST_FLIP_SCORE"
+  | "HIGHEST_PROFIT"
+  | "HIGHEST_ROI"
+  | "BIGGEST_DISCOUNT"
+  | "LOWEST_LIST_PRICE"
+  | "NEWEST_LISTING"
+  | "BIGGEST_PRICE_DROP";
+
+export type FlipOpportunityProperty = {
+  id: string;
+  address: string;
+  city: string | null;
+  state: string | null;
+  zipCode: string | null;
+  propertyType: string | null;
+  listPrice: number;
+  estimatedValue: number;
+  estimatedRehabCost: number;
+  closingCosts: number;
+  holdingCosts: number;
+  estimatedProfit: number;
+  roiPercent: number;
+  discountPercent: number;
+  priceDropAmount: number;
+  daysOnMarket: number | null;
+  rehabRisk: string;
+  bedrooms: number | null;
+  bathrooms: number | null;
+  livingArea: number;
+  yearBuilt: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  flipScore: number;
+  recommendation: string;
+  highlights: string[];
+};
+
+export type FlipOpportunityResponse = {
+  zipCode: string;
+  count: number;
+  sort: FlipOpportunitySort;
+  filters: {
+    minProfit: number;
+    minRoi: number;
+    minDiscount: number;
+  };
+  properties: FlipOpportunityProperty[];
+};

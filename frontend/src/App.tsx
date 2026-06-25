@@ -5,12 +5,14 @@ import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
+import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Typography from "@mui/material/Typography";
+import { searchFlipOpportunities } from "./api/addresses";
 import { analyzeDealWithAi, evaluateDeal } from "./api/deals";
 import flipIqLogo from "./assets/flipiq-logo-primary.jpeg";
 import AddressSearchInput from "./components/AddressSearchInput";
@@ -18,7 +20,10 @@ import type {
   AiDealReviewResponse,
   DealEvaluationRequest,
   DealEvaluationResponse,
-  EnrichedPropertyResponse
+  EnrichedPropertyResponse,
+  FlipOpportunityProperty,
+  FlipOpportunityResponse,
+  FlipOpportunitySort
 } from "./types/deals";
 
 type DealFormState = {
@@ -114,6 +119,22 @@ const numberFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 1
 });
 
+const defaultZipFilters = {
+  minProfit: "25000",
+  minRoi: "10",
+  minDiscount: "5"
+};
+
+const sortOptions: Array<{ value: FlipOpportunitySort; label: string }> = [
+  { value: "BEST_FLIP_SCORE", label: "Best Flip Score" },
+  { value: "HIGHEST_PROFIT", label: "Highest Estimated Profit" },
+  { value: "HIGHEST_ROI", label: "Highest ROI" },
+  { value: "BIGGEST_DISCOUNT", label: "Biggest Discount" },
+  { value: "LOWEST_LIST_PRICE", label: "Lowest List Price" },
+  { value: "NEWEST_LISTING", label: "Newest Listing" },
+  { value: "BIGGEST_PRICE_DROP", label: "Biggest Price Drop" }
+];
+
 export default function App() {
   const [form, setForm] = useState<DealFormState>(initialFormState);
   const [result, setResult] = useState<DealEvaluationResponse | null>(null);
@@ -123,11 +144,15 @@ export default function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [analysisMode, setAnalysisMode] = useState<AnalysisMode>("address");
-  const [zipAnalysisStarted, setZipAnalysisStarted] = useState(false);
+  const [zipOpportunities, setZipOpportunities] = useState<FlipOpportunityResponse | null>(null);
+  const [zipError, setZipError] = useState<string | null>(null);
+  const [isZipSearching, setIsZipSearching] = useState(false);
+  const [zipSort, setZipSort] = useState<FlipOpportunitySort>("BEST_FLIP_SCORE");
+  const [zipFilters, setZipFilters] = useState(defaultZipFilters);
 
   const analysis = useMemo(() => calculateAnalysis(form), [form]);
   const hasAddressAnalysis = Boolean(form.formattedAddress);
-  const hasAnalysisStarted = hasAddressAnalysis || zipAnalysisStarted;
+  const hasAnalysisStarted = hasAddressAnalysis;
   const showPropertyAutofill = analysisMode === "address" && hasAddressAnalysis;
   const canSubmit = !isSubmitting;
 
@@ -208,7 +233,7 @@ export default function App() {
     const livingArea = property.livingArea;
 
     setAnalysisMode("address");
-    setZipAnalysisStarted(false);
+    clearZipSearch();
     setForm((current) => ({
       ...current,
       propertyAddress: property.formattedAddress || property.address || current.propertyAddress,
@@ -245,7 +270,11 @@ export default function App() {
     setError(null);
     setAiError(null);
     setAnalysisMode("address");
-    setZipAnalysisStarted(false);
+    setZipOpportunities(null);
+    setZipError(null);
+    setIsZipSearching(false);
+    setZipSort("BEST_FLIP_SCORE");
+    setZipFilters(defaultZipFilters);
   }
 
   function clearAnalysisOutputs() {
@@ -261,13 +290,13 @@ export default function App() {
     }
 
     setAnalysisMode(nextMode);
-    setZipAnalysisStarted(false);
     setForm(initialFormState);
     clearAnalysisOutputs();
+    clearZipSearch();
   }
 
   function handleAddressInputChange(value: string) {
-    setZipAnalysisStarted(false);
+    clearZipSearch();
     setForm((current) => ({
       ...current,
       propertyAddress: value,
@@ -295,7 +324,8 @@ export default function App() {
 
   function handleZipCodeChange(value: string) {
     const nextZipCode = value.replace(/\D/g, "").slice(0, 5);
-    setZipAnalysisStarted(false);
+    setZipOpportunities(null);
+    setZipError(null);
     setForm((current) => ({
       ...current,
       propertyAddress: "",
@@ -321,13 +351,77 @@ export default function App() {
     clearAnalysisOutputs();
   }
 
-  function handleZipContinue() {
+  function clearZipSearch() {
+    setZipOpportunities(null);
+    setZipError(null);
+    setIsZipSearching(false);
+  }
+
+  async function handleZipSearch(nextSort: FlipOpportunitySort = zipSort) {
     if (!isValidZipCode(form.zipCode)) {
+      setZipError("Please enter a valid 5-digit ZIP code.");
       return;
     }
 
-    setZipAnalysisStarted(true);
     clearAnalysisOutputs();
+    setZipError(null);
+    setIsZipSearching(true);
+
+    try {
+      const response = await searchFlipOpportunities({
+        zipCode: form.zipCode,
+        sort: nextSort,
+        limit: 25,
+        minProfit: toNumber(zipFilters.minProfit),
+        minRoi: toNumber(zipFilters.minRoi),
+        minDiscount: toNumber(zipFilters.minDiscount)
+      });
+      setZipOpportunities(response);
+    } catch (caughtError) {
+      console.error(caughtError);
+      setZipOpportunities(null);
+      setZipError("We could not load properties right now. Please try again.");
+    } finally {
+      setIsZipSearching(false);
+    }
+  }
+
+  function handleZipSortChange(nextSort: FlipOpportunitySort) {
+    setZipSort(nextSort);
+    if (zipOpportunities && isValidZipCode(form.zipCode)) {
+      void handleZipSearch(nextSort);
+    }
+  }
+
+  function handleAnalyzeOpportunity(property: FlipOpportunityProperty) {
+    setAnalysisMode("address");
+    setZipOpportunities(null);
+    setZipError(null);
+    setForm((current) => ({
+      ...current,
+      propertyAddress: property.address,
+      purchasePrice: String(property.listPrice),
+      afterRepairValue: String(property.estimatedValue),
+      holdingAndSellingCosts: String(property.estimatedRehabCost + property.closingCosts + property.holdingCosts),
+      estimatedValue: String(property.estimatedValue),
+      lastSalePrice: "",
+      lastSaleDate: "",
+      bedrooms: property.bedrooms == null ? "" : String(property.bedrooms),
+      bathrooms: property.bathrooms == null ? "" : String(property.bathrooms),
+      livingArea: String(property.livingArea),
+      googlePlaceId: "",
+      formattedAddress: property.address,
+      streetNumber: "",
+      route: "",
+      city: property.city ?? "",
+      county: "",
+      state: property.state ?? "",
+      stateCode: property.state ?? "",
+      zipCode: property.zipCode ?? form.zipCode,
+      country: "",
+      latitude: property.latitude?.toString() ?? "",
+      longitude: property.longitude?.toString() ?? ""
+    }));
   }
 
   return (
@@ -383,26 +477,31 @@ export default function App() {
                       onPropertyEnriched={handlePropertyEnriched}
                     />
                   ) : (
-                    <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-start" }}>
-                      <TextField
-                        label="ZIP code"
-                        value={form.zipCode}
-                        onChange={(event) => handleZipCodeChange(event.target.value)}
-                        placeholder="Enter ZIP code"
-                        helperText="ZIP analysis will use manual worksheet inputs for now."
-                        slotProps={{ htmlInput: { inputMode: "numeric", maxLength: 5 } }}
-                        fullWidth
-                      />
-                      <Button
-                        type="button"
-                        variant="contained"
-                        size="large"
-                        className="zip-continue-button"
-                        disabled={!isValidZipCode(form.zipCode)}
-                        onClick={handleZipContinue}
-                      >
-                        Continue
-                      </Button>
+                    <Stack spacing={2}>
+                      <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "flex-start" }}>
+                        <TextField
+                          label="ZIP code"
+                          value={form.zipCode}
+                          onChange={(event) => handleZipCodeChange(event.target.value)}
+                          placeholder="33101"
+                          error={Boolean(zipError && !isValidZipCode(form.zipCode))}
+                          helperText={zipError && !isValidZipCode(form.zipCode) ? zipError : "Must be exactly 5 digits."}
+                          slotProps={{ htmlInput: { inputMode: "numeric", maxLength: 5 } }}
+                          fullWidth
+                        />
+                        <Button
+                          type="button"
+                          variant="contained"
+                          size="large"
+                          className="zip-continue-button"
+                          disabled={!isValidZipCode(form.zipCode) || isZipSearching}
+                          startIcon={isZipSearching ? <CircularProgress color="inherit" size={18} /> : null}
+                          onClick={() => void handleZipSearch()}
+                        >
+                          {isZipSearching ? "Searching" : "Search"}
+                        </Button>
+                      </Stack>
+                      {zipError && isValidZipCode(form.zipCode) ? <Alert severity="error">{zipError}</Alert> : null}
                     </Stack>
                   )}
                 </Box>
@@ -499,6 +598,25 @@ export default function App() {
                   </Box>
                 </Box>
               ) : null}
+
+              {analysisMode === "zip" ? (
+                <FlipOpportunitiesPanel
+                  response={zipOpportunities}
+                  zipCode={form.zipCode}
+                  sort={zipSort}
+                  filters={zipFilters}
+                  isLoading={isZipSearching}
+                  onSortChange={handleZipSortChange}
+                  onFilterChange={(name, value) =>
+                    setZipFilters((current) => ({
+                      ...current,
+                      [name]: value
+                    }))
+                  }
+                  onApplyFilters={() => void handleZipSearch()}
+                  onAnalyze={handleAnalyzeOpportunity}
+                />
+              ) : null}
             </Stack>
 
             {hasAnalysisStarted ? (
@@ -514,6 +632,188 @@ export default function App() {
           </Box>
         </Stack>
       </Container>
+    </Box>
+  );
+}
+
+function FlipOpportunitiesPanel({
+  response,
+  zipCode,
+  sort,
+  filters,
+  isLoading,
+  onSortChange,
+  onFilterChange,
+  onApplyFilters,
+  onAnalyze
+}: {
+  response: FlipOpportunityResponse | null;
+  zipCode: string;
+  sort: FlipOpportunitySort;
+  filters: typeof defaultZipFilters;
+  isLoading: boolean;
+  onSortChange: (sort: FlipOpportunitySort) => void;
+  onFilterChange: (name: keyof typeof defaultZipFilters, value: string) => void;
+  onApplyFilters: () => void;
+  onAnalyze: (property: FlipOpportunityProperty) => void;
+}) {
+  if (!response && !isLoading) {
+    return null;
+  }
+
+  return (
+    <Paper elevation={0} className="flip-opportunities-panel">
+      <Stack spacing={2.5}>
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={1.5}
+          justifyContent="space-between"
+          alignItems={{ md: "center" }}
+        >
+          <SectionHeader eyebrow="ZIP opportunity finder" title="Best flip deals" />
+          <TextField
+            select
+            label="Sort"
+            value={sort}
+            className="flip-sort-select"
+            onChange={(event) => onSortChange(event.target.value as FlipOpportunitySort)}
+          >
+            {sortOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Stack>
+
+        <Box className="opportunity-filter-grid">
+          <CurrencyField
+            label="Minimum profit"
+            value={filters.minProfit}
+            onChange={(value) => onFilterChange("minProfit", value)}
+          />
+          <NumberField
+            label="Minimum ROI"
+            suffix="%"
+            value={filters.minRoi}
+            onChange={(value) => onFilterChange("minRoi", value)}
+          />
+          <NumberField
+            label="Minimum discount"
+            suffix="%"
+            value={filters.minDiscount}
+            onChange={(value) => onFilterChange("minDiscount", value)}
+          />
+          <Button
+            type="button"
+            variant="outlined"
+            className="opportunity-filter-button"
+            disabled={isLoading}
+            onClick={onApplyFilters}
+          >
+            Apply Filters
+          </Button>
+        </Box>
+
+        {isLoading ? (
+          <Stack direction="row" spacing={1.5} alignItems="center" className="zip-loading-state">
+            <CircularProgress color="inherit" size={20} />
+            <Typography>Finding the best flip opportunities near {zipCode}...</Typography>
+          </Stack>
+        ) : null}
+
+        {!isLoading && response && response.properties.length === 0 ? (
+          <Alert severity="info">
+            No strong flip opportunities found in this ZIP code. Try another ZIP code or lower the filters.
+          </Alert>
+        ) : null}
+
+        {!isLoading && response && response.properties.length > 0 ? (
+          <Stack spacing={1.5}>
+            <Typography color="text.secondary">
+              Showing {response.count} active properties that clear the default profit, ROI, and discount filters.
+            </Typography>
+            {response.properties.map((property, index) => (
+              <FlipOpportunityCard
+                key={property.id}
+                property={property}
+                rank={index + 1}
+                onAnalyze={onAnalyze}
+              />
+            ))}
+          </Stack>
+        ) : null}
+      </Stack>
+    </Paper>
+  );
+}
+
+function FlipOpportunityCard({
+  property,
+  rank,
+  onAnalyze
+}: {
+  property: FlipOpportunityProperty;
+  rank: number;
+  onAnalyze: (property: FlipOpportunityProperty) => void;
+}) {
+  const bedBathArea = [
+    property.propertyType,
+    property.bedrooms == null ? null : `${property.bedrooms} bd`,
+    property.bathrooms == null ? null : `${numberFormatter.format(property.bathrooms)} ba`,
+    property.livingArea == null ? null : `${numberFormatter.format(property.livingArea)} sqft`
+  ].filter(Boolean);
+
+  return (
+    <Box className="flip-opportunity-card">
+      <Stack spacing={1.6}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={1}
+          alignItems={{ sm: "center" }}
+          justifyContent="space-between"
+        >
+          <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+            <Chip
+              label={property.recommendation}
+              className={`opportunity-badge ${recommendationClass(property.recommendation)}`}
+            />
+            <Typography className="opportunity-rank">#{rank} Best Flip Deal</Typography>
+          </Stack>
+          <Typography className="opportunity-score">Flip Score: {property.flipScore}/100</Typography>
+        </Stack>
+
+        <Box>
+          <Typography variant="h3" className="opportunity-address">
+            {property.address}
+          </Typography>
+          <Typography color="text.secondary">{bedBathArea.join(" • ")}</Typography>
+        </Box>
+
+        <Box className="opportunity-metrics">
+          <ResultMetric label="List Price" value={currencyFormatter.format(property.listPrice)} />
+          <ResultMetric label="Estimated Value" value={currencyFormatter.format(property.estimatedValue)} />
+          <ResultMetric label="Estimated Profit" value={currencyFormatter.format(property.estimatedProfit)} />
+          <ResultMetric label="ROI" value={`${numberFormatter.format(property.roiPercent)}%`} />
+          <ResultMetric label="Discount" value={`${numberFormatter.format(property.discountPercent)}%`} />
+          <ResultMetric label="Price Drop" value={currencyFormatter.format(property.priceDropAmount)} />
+        </Box>
+
+        <Stack spacing={0.6}>
+          <Typography className="summary-title">Highlights</Typography>
+          {property.highlights.map((highlight) => (
+            <Typography color="text.secondary" key={highlight}>
+              {highlight}
+            </Typography>
+          ))}
+        </Stack>
+
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.2} className="opportunity-actions">
+          <Button type="button" variant="outlined" onClick={() => onAnalyze(property)}>
+            Analyze Deal
+          </Button>
+        </Stack>
+      </Stack>
     </Box>
   );
 }
@@ -958,6 +1258,13 @@ function riskTone(riskLevel: string): "green" | "yellow" | "red" {
   if (riskLevel === "Low") return "green";
   if (riskLevel === "Medium") return "yellow";
   return "red";
+}
+
+function recommendationClass(recommendation: string) {
+  if (recommendation === "Strong Flip Candidate") return "opportunity-badge-strong";
+  if (recommendation === "Good Deal") return "opportunity-badge-good";
+  if (recommendation === "Maybe") return "opportunity-badge-maybe";
+  return "opportunity-badge-avoid";
 }
 
 function toNumber(value: string): number {
