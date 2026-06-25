@@ -199,52 +199,62 @@ body {
 }
 
 .deal-panel,
-.insight-card {
+.insight-card,
+.flip-opportunities-panel {
   padding: 22px;
   box-shadow: 0 12px 34px var(--prime-shadow);
 }
 
 .deal-panel.MuiPaper-root,
-.insight-card.MuiPaper-root {
+.insight-card.MuiPaper-root,
+.flip-opportunities-panel.MuiPaper-root {
   border-color: rgba(214, 203, 192, 0.18);
   color: var(--prime-taupe);
   background: var(--prime-navy);
 }
 
 .deal-panel .MuiTypography-root,
-.insight-card .MuiTypography-root {
+.insight-card .MuiTypography-root,
+.flip-opportunities-panel .MuiTypography-root {
   color: inherit;
 }
 
 .deal-panel .MuiTypography-colorTextSecondary,
-.insight-card .MuiTypography-colorTextSecondary {
+.insight-card .MuiTypography-colorTextSecondary,
+.flip-opportunities-panel .MuiTypography-colorTextSecondary {
   color: var(--prime-muted-on-dark);
 }
 
 .deal-panel .MuiInputBase-root,
-.insight-card .MuiInputBase-root {
+.insight-card .MuiInputBase-root,
+.flip-opportunities-panel .MuiInputBase-root {
   background: var(--prime-card);
 }
 
 .deal-panel .MuiInputBase-input,
-.insight-card .MuiInputBase-input {
+.insight-card .MuiInputBase-input,
+.flip-opportunities-panel .MuiInputBase-input {
   color: var(--prime-ink);
 }
 
 .deal-panel .MuiFormLabel-root,
-.insight-card .MuiFormLabel-root {
+.insight-card .MuiFormLabel-root,
+.flip-opportunities-panel .MuiFormLabel-root {
   color: var(--prime-taupe);
 }
 
 .deal-panel .MuiFormLabel-root.Mui-focused,
 .deal-panel .MuiFormLabel-root.MuiInputLabel-shrink,
 .insight-card .MuiFormLabel-root.Mui-focused,
-.insight-card .MuiFormLabel-root.MuiInputLabel-shrink {
+.insight-card .MuiFormLabel-root.MuiInputLabel-shrink,
+.flip-opportunities-panel .MuiFormLabel-root.Mui-focused,
+.flip-opportunities-panel .MuiFormLabel-root.MuiInputLabel-shrink {
   color: var(--prime-taupe);
 }
 
 .deal-panel .MuiFormLabel-root.MuiInputLabel-shrink,
-.insight-card .MuiFormLabel-root.MuiInputLabel-shrink {
+.insight-card .MuiFormLabel-root.MuiInputLabel-shrink,
+.flip-opportunities-panel .MuiFormLabel-root.MuiInputLabel-shrink {
   padding-right: 4px;
   padding-left: 4px;
   border-radius: 4px;
@@ -252,7 +262,8 @@ body {
 }
 
 .deal-panel .MuiOutlinedInput-notchedOutline,
-.insight-card .MuiOutlinedInput-notchedOutline {
+.insight-card .MuiOutlinedInput-notchedOutline,
+.flip-opportunities-panel .MuiOutlinedInput-notchedOutline {
   border-color: rgba(214, 203, 192, 0.24);
 }
 
@@ -343,6 +354,109 @@ body {
 
 .deal-panel .form-actions .MuiButton-contained.Mui-disabled {
   background: rgba(11, 99, 216, 0.42);
+}
+
+.flip-opportunities-panel {
+  border: 1px solid rgba(214, 203, 192, 0.18);
+  border-radius: 8px;
+}
+
+.flip-sort-select {
+  width: min(100%, 260px);
+}
+
+.zip-loading-state {
+  min-height: 58px;
+  padding: 14px;
+  border: 1px solid rgba(214, 203, 192, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.opportunity-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  gap: 10px;
+  align-items: start;
+}
+
+.opportunity-filter-button.MuiButton-root {
+  min-width: 136px;
+  min-height: 56px;
+  border-color: rgba(255, 255, 255, 0.58);
+  color: #ffffff;
+  font-weight: 850;
+}
+
+.opportunity-filter-button.MuiButton-root:hover {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.flip-opportunity-card {
+  padding: 16px;
+  border: 1px solid rgba(214, 203, 192, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.opportunity-badge.MuiChip-root {
+  min-height: 30px;
+  border-radius: 8px;
+  color: var(--prime-ink);
+  font-weight: 900;
+}
+
+.opportunity-badge-strong.MuiChip-root {
+  background: #bfe3c9;
+}
+
+.opportunity-badge-good.MuiChip-root {
+  background: #bfd6f3;
+}
+
+.opportunity-badge-maybe.MuiChip-root {
+  background: #f3dfa8;
+}
+
+.opportunity-badge-avoid.MuiChip-root {
+  background: #efc2bf;
+}
+
+.opportunity-rank,
+.opportunity-score {
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.opportunity-score {
+  color: var(--prime-gold) !important;
+}
+
+.opportunity-address.MuiTypography-root {
+  color: var(--prime-taupe);
+  font-size: 1.2rem;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+.opportunity-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.opportunity-actions .MuiButton-root {
+  width: fit-content;
+  min-height: 42px;
+  border-color: rgba(255, 255, 255, 0.58);
+  color: #ffffff;
+  font-weight: 850;
+}
+
+.opportunity-actions .MuiButton-root:hover {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .metric,
@@ -616,7 +730,8 @@ body {
   }
 
   .deal-panel,
-  .insight-card {
+  .insight-card,
+  .flip-opportunities-panel {
     padding: 14px;
     box-shadow: none;
   }
@@ -631,6 +746,8 @@ body {
 
   .field-grid,
   .result-grid,
+  .opportunity-metrics,
+  .opportunity-filter-grid,
   .editable-row,
   .comp-row {
     grid-template-columns: 1fr;

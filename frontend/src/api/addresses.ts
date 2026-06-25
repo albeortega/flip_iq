@@ -1,4 +1,10 @@
-import type { AddressDetails, AddressSuggestion, EnrichedPropertyResponse } from "../types/deals";
+import type {
+  AddressDetails,
+  AddressSuggestion,
+  EnrichedPropertyResponse,
+  FlipOpportunityResponse,
+  FlipOpportunitySort
+} from "../types/deals";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
@@ -56,6 +62,42 @@ export async function enrichPropertyFromAddress(params: {
   }
 
   return response.json() as Promise<EnrichedPropertyResponse>;
+}
+
+export async function searchFlipOpportunities(params: {
+  zipCode: string;
+  sort?: FlipOpportunitySort;
+  limit?: number;
+  minProfit?: number;
+  minRoi?: number;
+  minDiscount?: number;
+}): Promise<FlipOpportunityResponse> {
+  const searchParams = new URLSearchParams({
+    zipCode: params.zipCode
+  });
+  if (params.sort) {
+    searchParams.set("sort", params.sort);
+  }
+  if (params.limit) {
+    searchParams.set("limit", String(params.limit));
+  }
+  if (params.minProfit != null) {
+    searchParams.set("minProfit", String(params.minProfit));
+  }
+  if (params.minRoi != null) {
+    searchParams.set("minRoi", String(params.minRoi));
+  }
+  if (params.minDiscount != null) {
+    searchParams.set("minDiscount", String(params.minDiscount));
+  }
+
+  const response = await fetch(`${API_BASE_URL}/api/properties/flip-opportunities?${searchParams.toString()}`);
+
+  if (!response.ok) {
+    throw new Error(await getAddressErrorMessage(response, "We could not load properties right now. Please try again."));
+  }
+
+  return response.json() as Promise<FlipOpportunityResponse>;
 }
 
 async function getAddressErrorMessage(response: Response, fallback: string): Promise<string> {
