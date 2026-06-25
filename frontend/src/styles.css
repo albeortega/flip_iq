@@ -420,10 +420,15 @@ body {
   letter-spacing: 0;
 }
 
-.opportunity-metrics {
+.opportunity-metrics,
+.opportunity-detail-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
+}
+
+.opportunity-detail-grid .result-metric {
+  min-height: 68px;
 }
 
 .opportunity-actions .MuiButton-root {
@@ -727,6 +732,7 @@ body {
   .field-grid,
   .result-grid,
   .opportunity-metrics,
+  .opportunity-detail-grid,
   .editable-row,
   .comp-row {
     grid-template-columns: 1fr;
