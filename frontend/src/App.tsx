@@ -119,12 +119,6 @@ const numberFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 1
 });
 
-const defaultZipFilters = {
-  minProfit: "25000",
-  minRoi: "10",
-  minDiscount: "5"
-};
-
 const sortOptions: Array<{ value: FlipOpportunitySort; label: string }> = [
   { value: "BEST_FLIP_SCORE", label: "Best Flip Score" },
   { value: "HIGHEST_PROFIT", label: "Highest Estimated Profit" },
@@ -148,7 +142,6 @@ export default function App() {
   const [zipError, setZipError] = useState<string | null>(null);
   const [isZipSearching, setIsZipSearching] = useState(false);
   const [zipSort, setZipSort] = useState<FlipOpportunitySort>("BEST_FLIP_SCORE");
-  const [zipFilters, setZipFilters] = useState(defaultZipFilters);
 
   const analysis = useMemo(() => calculateAnalysis(form), [form]);
   const hasAddressAnalysis = Boolean(form.formattedAddress);
@@ -274,7 +267,6 @@ export default function App() {
     setZipError(null);
     setIsZipSearching(false);
     setZipSort("BEST_FLIP_SCORE");
-    setZipFilters(defaultZipFilters);
   }
 
   function clearAnalysisOutputs() {
@@ -370,11 +362,7 @@ export default function App() {
     try {
       const response = await searchFlipOpportunities({
         zipCode: form.zipCode,
-        sort: nextSort,
-        limit: 25,
-        minProfit: toNumber(zipFilters.minProfit),
-        minRoi: toNumber(zipFilters.minRoi),
-        minDiscount: toNumber(zipFilters.minDiscount)
+        sort: nextSort
       });
       setZipOpportunities(response);
     } catch (caughtError) {
@@ -604,16 +592,8 @@ export default function App() {
                   response={zipOpportunities}
                   zipCode={form.zipCode}
                   sort={zipSort}
-                  filters={zipFilters}
                   isLoading={isZipSearching}
                   onSortChange={handleZipSortChange}
-                  onFilterChange={(name, value) =>
-                    setZipFilters((current) => ({
-                      ...current,
-                      [name]: value
-                    }))
-                  }
-                  onApplyFilters={() => void handleZipSearch()}
                   onAnalyze={handleAnalyzeOpportunity}
                 />
               ) : null}
@@ -640,21 +620,15 @@ function FlipOpportunitiesPanel({
   response,
   zipCode,
   sort,
-  filters,
   isLoading,
   onSortChange,
-  onFilterChange,
-  onApplyFilters,
   onAnalyze
 }: {
   response: FlipOpportunityResponse | null;
   zipCode: string;
   sort: FlipOpportunitySort;
-  filters: typeof defaultZipFilters;
   isLoading: boolean;
   onSortChange: (sort: FlipOpportunitySort) => void;
-  onFilterChange: (name: keyof typeof defaultZipFilters, value: string) => void;
-  onApplyFilters: () => void;
   onAnalyze: (property: FlipOpportunityProperty) => void;
 }) {
   if (!response && !isLoading) {
@@ -686,35 +660,6 @@ function FlipOpportunitiesPanel({
           </TextField>
         </Stack>
 
-        <Box className="opportunity-filter-grid">
-          <CurrencyField
-            label="Minimum profit"
-            value={filters.minProfit}
-            onChange={(value) => onFilterChange("minProfit", value)}
-          />
-          <NumberField
-            label="Minimum ROI"
-            suffix="%"
-            value={filters.minRoi}
-            onChange={(value) => onFilterChange("minRoi", value)}
-          />
-          <NumberField
-            label="Minimum discount"
-            suffix="%"
-            value={filters.minDiscount}
-            onChange={(value) => onFilterChange("minDiscount", value)}
-          />
-          <Button
-            type="button"
-            variant="outlined"
-            className="opportunity-filter-button"
-            disabled={isLoading}
-            onClick={onApplyFilters}
-          >
-            Apply Filters
-          </Button>
-        </Box>
-
         {isLoading ? (
           <Stack direction="row" spacing={1.5} alignItems="center" className="zip-loading-state">
             <CircularProgress color="inherit" size={20} />
@@ -731,7 +676,7 @@ function FlipOpportunitiesPanel({
         {!isLoading && response && response.properties.length > 0 ? (
           <Stack spacing={1.5}>
             <Typography color="text.secondary">
-              Showing {response.count} active properties that clear the default profit, ROI, and discount filters.
+              Showing {response.count} active properties with enough data to calculate flip metrics.
             </Typography>
             {response.properties.map((property, index) => (
               <FlipOpportunityCard

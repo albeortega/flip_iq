@@ -120,10 +120,5 @@ export type FlipOpportunityResponse = {
   zipCode: string;
   count: number;
   sort: FlipOpportunitySort;
-  filters: {
-    minProfit: number;
-    minRoi: number;
-    minDiscount: number;
-  };
   properties: FlipOpportunityProperty[];
 };
