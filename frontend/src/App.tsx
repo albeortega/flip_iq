@@ -120,6 +120,7 @@ export default function App() {
   const [isAiLoading, setIsAiLoading] = useState(false);
 
   const analysis = useMemo(() => calculateAnalysis(form), [form]);
+  const hasAnalysisStarted = Boolean(form.formattedAddress || isValidZipCode(form.zipCode));
   const canSubmit = !isSubmitting;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -227,6 +228,73 @@ export default function App() {
     }));
   }
 
+  function resetAnalysis() {
+    setForm(initialFormState);
+    setResult(null);
+    setAiReview(null);
+    setError(null);
+    setAiError(null);
+  }
+
+  function handleAddressInputChange(value: string) {
+    setForm((current) => ({
+      ...current,
+      propertyAddress: value,
+      googlePlaceId: "",
+      formattedAddress: "",
+      streetNumber: "",
+      route: "",
+      city: "",
+      county: "",
+      state: "",
+      stateCode: "",
+      zipCode: "",
+      country: "",
+      latitude: "",
+      longitude: "",
+      estimatedValue: "",
+      lastSalePrice: "",
+      lastSaleDate: "",
+      bedrooms: "",
+      bathrooms: "",
+      livingArea: ""
+    }));
+    setResult(null);
+    setAiReview(null);
+    setError(null);
+    setAiError(null);
+  }
+
+  function handleZipCodeChange(value: string) {
+    const nextZipCode = value.replace(/\D/g, "").slice(0, 5);
+    setForm((current) => ({
+      ...current,
+      propertyAddress: "",
+      googlePlaceId: "",
+      formattedAddress: "",
+      streetNumber: "",
+      route: "",
+      city: "",
+      county: "",
+      state: "",
+      stateCode: "",
+      zipCode: nextZipCode,
+      country: "",
+      latitude: "",
+      longitude: "",
+      estimatedValue: "",
+      lastSalePrice: "",
+      lastSaleDate: "",
+      bedrooms: "",
+      bathrooms: "",
+      livingArea: ""
+    }));
+    setResult(null);
+    setAiReview(null);
+    setError(null);
+    setAiError(null);
+  }
+
   return (
     <Box component="main" className="app-shell">
       <Container maxWidth="xl" className="page-container">
@@ -239,7 +307,7 @@ export default function App() {
               <Typography>Analyzer</Typography>
               <Typography>Comps</Typography>
             </Stack>
-            <Button variant="outlined" href="#deal-form">
+            <Button variant="outlined" href="#deal-form" onClick={resetAnalysis}>
               New Analysis
             </Button>
           </Box>
@@ -260,7 +328,7 @@ export default function App() {
             </Box>
           </Box>
 
-          <Box className="analysis-grid">
+          <Box className={hasAnalysisStarted ? "analysis-grid" : "analysis-grid analysis-grid-start"}>
             <Paper component="section" elevation={0} className="deal-panel" id="deal-form">
               <Stack
                 component="form"
@@ -273,135 +341,105 @@ export default function App() {
                 <SectionHeader eyebrow="Deal worksheet" title="Property and offer inputs" />
                 {error ? <Alert severity="error">{error}</Alert> : null}
 
-                <AddressSearchInput
-                  value={form.propertyAddress}
-                  onInputChange={(value) =>
-                    setForm((current) => ({
-                      ...current,
-                      propertyAddress: value,
-                      googlePlaceId: "",
-                      formattedAddress: "",
-                      streetNumber: "",
-                      route: "",
-                      city: "",
-                      county: "",
-                      state: "",
-                      stateCode: "",
-                      zipCode: "",
-                      country: "",
-                      latitude: "",
-                      longitude: "",
-                      estimatedValue: "",
-                      lastSalePrice: "",
-                      lastSaleDate: "",
-                      bedrooms: "",
-                      bathrooms: "",
-                      livingArea: ""
-                    }))
-                  }
-                  onPropertyEnriched={handlePropertyEnriched}
-                />
-
-                <Box className="field-grid">
-                  <CurrencyField
-                    label="Purchase price"
-                    value={form.purchasePrice}
-                    onChange={(value) => setForm((current) => ({ ...current, purchasePrice: value }))}
-                  />
-                  <CurrencyField
-                    label="After-repair value"
-                    value={form.afterRepairValue}
-                    min="0.01"
-                    onChange={(value) =>
-                      setForm((current) => ({ ...current, afterRepairValue: value }))
-                    }
-                  />
-                  <NumberField
-                    label="MAO rule percentage"
-                    value={form.maoRulePercentage}
-                    suffix="%"
-                    onChange={(value) =>
-                      setForm((current) => ({ ...current, maoRulePercentage: value }))
-                    }
-                  />
-                  <CurrencyField
-                    label="Reparation and selling cost"
-                    value={form.holdingAndSellingCosts}
-                    onChange={(value) =>
-                      setForm((current) => ({ ...current, holdingAndSellingCosts: value }))
-                    }
-                  />
-                </Box>
-
-                <Box className="field-grid">
-                  <CurrencyField
-                    label="Estimated value"
-                    value={form.estimatedValue}
-                    readOnly
-                  />
-                  <CurrencyField
-                    label="Last sale price"
-                    value={form.lastSalePrice}
-                    readOnly
+                <Box className="analysis-entry-grid">
+                  <AddressSearchInput
+                    value={form.propertyAddress}
+                    onInputChange={handleAddressInputChange}
+                    onPropertyEnriched={handlePropertyEnriched}
                   />
                   <TextField
-                    label="Last sale date"
-                    type="date"
-                    value={form.lastSaleDate}
-                    slotProps={{
-                      htmlInput: { readOnly: true },
-                      inputLabel: { shrink: true }
-                    }}
+                    label="ZIP code"
+                    value={form.zipCode}
+                    onChange={(event) => handleZipCodeChange(event.target.value)}
+                    placeholder="Enter ZIP code"
+                    slotProps={{ htmlInput: { inputMode: "numeric", maxLength: 5 } }}
                     fullWidth
-                  />
-                  <NumberField
-                    label="Bedrooms"
-                    value={form.bedrooms}
-                    suffix="beds"
-                    readOnly
-                  />
-                  <NumberField
-                    label="Bathrooms"
-                    value={form.bathrooms}
-                    suffix="baths"
-                    readOnly
-                  />
-                  <NumberField
-                    label="Living area"
-                    value={form.livingArea}
-                    suffix="sq ft"
-                    readOnly
                   />
                 </Box>
 
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} className="form-actions">
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    size="large"
-                    disabled={!canSubmit}
-                    startIcon={isSubmitting ? <CircularProgress color="inherit" size={18} /> : null}
-                  >
-                    {isSubmitting ? "Evaluating" : "Evaluate Deal"}
-                  </Button>
-                  <Button type="button" variant="outlined" size="large" onClick={handleAiReview}>
-                    {isAiLoading ? "Analyzing" : "Analyze This Deal"}
-                  </Button>
-                  <Button type="button" variant="text" size="large" onClick={handleExportPdf}>
-                    Export PDF Report
-                  </Button>
-                </Stack>
+                {hasAnalysisStarted ? (
+                  <>
+                    <Box className="field-grid">
+                      <CurrencyField
+                        label="Purchase price"
+                        value={form.purchasePrice}
+                        onChange={(value) => setForm((current) => ({ ...current, purchasePrice: value }))}
+                      />
+                      <CurrencyField
+                        label="After-repair value"
+                        value={form.afterRepairValue}
+                        min="0.01"
+                        onChange={(value) =>
+                          setForm((current) => ({ ...current, afterRepairValue: value }))
+                        }
+                      />
+                      <NumberField
+                        label="MAO rule percentage"
+                        value={form.maoRulePercentage}
+                        suffix="%"
+                        onChange={(value) =>
+                          setForm((current) => ({ ...current, maoRulePercentage: value }))
+                        }
+                      />
+                      <CurrencyField
+                        label="Reparation and selling cost"
+                        value={form.holdingAndSellingCosts}
+                        onChange={(value) =>
+                          setForm((current) => ({ ...current, holdingAndSellingCosts: value }))
+                        }
+                      />
+                    </Box>
+
+                    <Box className="field-grid">
+                      <CurrencyField label="Estimated value" value={form.estimatedValue} readOnly />
+                      <CurrencyField label="Last sale price" value={form.lastSalePrice} readOnly />
+                      <TextField
+                        label="Last sale date"
+                        type="date"
+                        value={form.lastSaleDate}
+                        slotProps={{
+                          htmlInput: { readOnly: true },
+                          inputLabel: { shrink: true }
+                        }}
+                        fullWidth
+                      />
+                      <NumberField label="Bedrooms" value={form.bedrooms} suffix="beds" readOnly />
+                      <NumberField label="Bathrooms" value={form.bathrooms} suffix="baths" readOnly />
+                      <NumberField label="Living area" value={form.livingArea} suffix="sq ft" readOnly />
+                    </Box>
+
+                    <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} className="form-actions">
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        size="large"
+                        disabled={!canSubmit}
+                        startIcon={isSubmitting ? <CircularProgress color="inherit" size={18} /> : null}
+                      >
+                        {isSubmitting ? "Evaluating" : "Evaluate Deal"}
+                      </Button>
+                      <Button type="button" variant="outlined" size="large" onClick={handleAiReview}>
+                        {isAiLoading ? "Analyzing" : "Analyze This Deal"}
+                      </Button>
+                      <Button type="button" variant="text" size="large" onClick={handleExportPdf}>
+                        Export PDF Report
+                      </Button>
+                    </Stack>
+                  </>
+                ) : null}
               </Stack>
             </Paper>
 
-            <Stack spacing={3}>
-              <MaoCard analysis={analysis} form={form} />
-              <DealScoreCard analysis={analysis} />
-              <RiskMeter analysis={analysis} />
-              <ResultPanel result={result} analysis={analysis} />
-              <SensitivityPanel analysis={analysis} />
-              <AiReviewPanel review={aiReview} error={aiError} />
-            </Stack>
+            {hasAnalysisStarted ? (
+              <Stack spacing={3}>
+                <MaoCard analysis={analysis} form={form} />
+                <DealScoreCard analysis={analysis} />
+                <RiskMeter analysis={analysis} />
+                <ResultPanel result={result} analysis={analysis} />
+                <SensitivityPanel analysis={analysis} />
+                <AiReviewPanel review={aiReview} error={aiError} />
+              </Stack>
+            ) : null}
           </Box>
         </Stack>
       </Container>
@@ -787,6 +825,9 @@ function getRiskReasons({
 }
 
 function getValidationError(form: DealFormState): string | null {
+  if (!form.propertyAddress.trim() && !isValidZipCode(form.zipCode)) {
+    return "Select a property address or enter a valid ZIP code.";
+  }
   if (!isPositiveNumber(form.afterRepairValue)) return "After-repair value must be greater than zero.";
   if (!isNonNegativeNumber(form.purchasePrice)) return "Purchase price must be zero or greater.";
   if (!isPositiveNumber(form.maoRulePercentage)) return "MAO percentage must be greater than zero.";
@@ -806,9 +847,13 @@ function isNonNegativeNumber(value: string): boolean {
   return value.trim() !== "" && Number.isFinite(parsed) && parsed >= 0;
 }
 
+function isValidZipCode(value: string): boolean {
+  return /^\d{5}$/.test(value.trim());
+}
+
 function toRequest(form: DealFormState, analysis: DealAnalysis): DealEvaluationRequest {
   return {
-    propertyAddress: form.propertyAddress.trim(),
+    propertyAddress: form.propertyAddress.trim() || form.zipCode.trim(),
     purchasePrice: toNumber(form.purchasePrice),
     afterRepairValue: toNumber(form.afterRepairValue),
     rehabCosts: analysis.repairCosts,
