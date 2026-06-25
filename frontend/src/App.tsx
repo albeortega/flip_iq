@@ -347,37 +347,22 @@ export default function App() {
             </Button>
           </Box>
 
-          <Box className="hero-band">
-            <Box>
-              <Typography variant="h1" className="hero-title">
-                Deal Analyzer
-              </Typography>
-              <Typography color="text.secondary" className="lede">
-                Model MAO, property value, offer spread, projected profit, and risk in one worksheet.
-              </Typography>
-            </Box>
-            <Box className="hero-metrics">
-              <Metric label="MAO" value={currencyFormatter.format(analysis.maximumAllowableOffer)} />
-              <Metric label="Score" value={`${analysis.dealScore}/100`} tone={scoreTone(analysis.dealScore)} />
-              <Metric label="Risk" value={analysis.riskLevel} tone={riskTone(analysis.riskLevel)} />
-            </Box>
-          </Box>
-
           <Box className={hasAnalysisStarted ? "analysis-grid" : "analysis-grid analysis-grid-start"}>
-            <Paper component="section" elevation={0} className="deal-panel" id="deal-form">
-              <Stack
-                component="form"
-                spacing={3}
-                className="deal-form-stack"
-                onSubmit={handleSubmit}
-                noValidate
-                aria-label="Deal evaluation form"
-              >
-                <SectionHeader
-                  eyebrow="Deal worksheet"
-                  title={hasAnalysisStarted ? "Property and offer inputs" : "Start a new analysis"}
-                />
-                {error ? <Alert severity="error">{error}</Alert> : null}
+            <Stack spacing={3}>
+              <Paper component="section" elevation={0} className="deal-panel" id="deal-form">
+                <Stack
+                  component="form"
+                  spacing={3}
+                  className="deal-form-stack"
+                  onSubmit={handleSubmit}
+                  noValidate
+                  aria-label="Deal evaluation form"
+                >
+                  <SectionHeader
+                    eyebrow="Deal worksheet"
+                    title={hasAnalysisStarted ? "Property and offer inputs" : "Start a new analysis"}
+                  />
+                  {error ? <Alert severity="error">{error}</Alert> : null}
 
                 <Box className="analysis-entry-stack">
                   <ToggleButtonGroup
@@ -494,8 +479,27 @@ export default function App() {
                     </Stack>
                   </>
                 ) : null}
-              </Stack>
-            </Paper>
+                </Stack>
+              </Paper>
+
+              {hasAddressAnalysis ? (
+                <Box className="hero-band">
+                  <Box>
+                    <Typography variant="h1" className="hero-title">
+                      Deal Analyzer
+                    </Typography>
+                    <Typography color="text.secondary" className="lede">
+                      Model MAO, property value, offer spread, projected profit, and risk in one worksheet.
+                    </Typography>
+                  </Box>
+                  <Box className="hero-metrics">
+                    <Metric label="MAO" value={currencyFormatter.format(analysis.maximumAllowableOffer)} />
+                    <Metric label="Score" value={`${analysis.dealScore}/100`} tone={scoreTone(analysis.dealScore)} />
+                    <Metric label="Risk" value={analysis.riskLevel} tone={riskTone(analysis.riskLevel)} />
+                  </Box>
+                </Box>
+              ) : null}
+            </Stack>
 
             {hasAnalysisStarted ? (
               <Stack spacing={3}>
