@@ -68,3 +68,14 @@ export type AddressDetails = {
   latitude: number | null;
   longitude: number | null;
 };
+
+export type EnrichedPropertyResponse = AddressDetails & {
+  address: string;
+  zestimate?: number | null;
+  estimatedValue?: number | null;
+  lastSalePrice?: number | null;
+  lastSaleDate?: string | null;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  livingArea?: number | null;
+};
