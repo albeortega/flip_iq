@@ -5,9 +5,7 @@ import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
-import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
-import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -20,23 +18,6 @@ import type {
   DealEvaluationResponse,
   EnrichedPropertyResponse
 } from "./types/deals";
-
-type RehabItem = {
-  id: number;
-  category: string;
-  estimatedCost: string;
-};
-
-type CompItem = {
-  id: number;
-  address: string;
-  salePrice: string;
-  squareFeet: string;
-  distanceMiles: string;
-  soldDate: string;
-  bedrooms: string;
-  bathrooms: string;
-};
 
 type SavedDeal = {
   id: number;
@@ -55,28 +36,6 @@ type DealFormState = {
   maoRulePercentage: string;
   holdingAndSellingCosts: string;
   profitBuffer: string;
-  financingType: "Cash" | "Hard Money Loan" | "Conventional Loan" | "Private Lender";
-  downPaymentPercentage: string;
-  interestRate: string;
-  loanTermMonths: string;
-  points: string;
-  holdingMonths: string;
-  monthlyRent: string;
-  propertyTax: string;
-  insurance: string;
-  hoa: string;
-  maintenance: string;
-  vacancyRate: string;
-  propertyManagementFee: string;
-  subjectSquareFeet: string;
-  floridaPropertyTaxes: string;
-  floridaInsurance: string;
-  floridaHoa: string;
-  realtorCommissionPercentage: string;
-  titleFees: string;
-  transferTaxes: string;
-  floodInsurance: string;
-  permitCosts: string;
   estimatedValue: string;
   lastSalePrice: string;
   lastSaleDate: string;
@@ -126,21 +85,6 @@ type DealAnalysis = {
   sensitivity: Array<{ name: string; profit: number; roi: number }>;
 };
 
-const rehabCategories = [
-  "Kitchen",
-  "Bathrooms",
-  "Flooring",
-  "Paint",
-  "Roof",
-  "HVAC",
-  "Electrical",
-  "Plumbing",
-  "Landscaping",
-  "Permits",
-  "Contingency",
-  "Other"
-];
-
 const initialFormState: DealFormState = {
   propertyAddress: "",
   purchasePrice: "",
@@ -148,28 +92,6 @@ const initialFormState: DealFormState = {
   maoRulePercentage: "",
   holdingAndSellingCosts: "",
   profitBuffer: "",
-  financingType: "Cash",
-  downPaymentPercentage: "",
-  interestRate: "",
-  loanTermMonths: "",
-  points: "",
-  holdingMonths: "",
-  monthlyRent: "",
-  propertyTax: "",
-  insurance: "",
-  hoa: "",
-  maintenance: "",
-  vacancyRate: "",
-  propertyManagementFee: "",
-  subjectSquareFeet: "",
-  floridaPropertyTaxes: "",
-  floridaInsurance: "",
-  floridaHoa: "",
-  realtorCommissionPercentage: "",
-  titleFees: "",
-  transferTaxes: "",
-  floodInsurance: "",
-  permitCosts: "",
   estimatedValue: "",
   lastSalePrice: "",
   lastSaleDate: "",
@@ -190,47 +112,6 @@ const initialFormState: DealFormState = {
   longitude: ""
 };
 
-const initialRehabItems: RehabItem[] = [
-  { id: 1, category: "Kitchen", estimatedCost: "" },
-  { id: 2, category: "Bathrooms", estimatedCost: "" },
-  { id: 3, category: "Flooring", estimatedCost: "" },
-  { id: 4, category: "Paint", estimatedCost: "" },
-  { id: 5, category: "Contingency", estimatedCost: "" }
-];
-
-const initialComps: CompItem[] = [
-  {
-    id: 1,
-    address: "",
-    salePrice: "",
-    squareFeet: "",
-    distanceMiles: "",
-    soldDate: "",
-    bedrooms: "",
-    bathrooms: ""
-  },
-  {
-    id: 2,
-    address: "",
-    salePrice: "",
-    squareFeet: "",
-    distanceMiles: "",
-    soldDate: "",
-    bedrooms: "",
-    bathrooms: ""
-  },
-  {
-    id: 3,
-    address: "",
-    salePrice: "",
-    squareFeet: "",
-    distanceMiles: "",
-    soldDate: "",
-    bedrooms: "",
-    bathrooms: ""
-  }
-];
-
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
@@ -250,8 +131,6 @@ const numberFormatter = new Intl.NumberFormat("en-US", {
 
 export default function App() {
   const [form, setForm] = useState<DealFormState>(initialFormState);
-  const [rehabItems, setRehabItems] = useState<RehabItem[]>(initialRehabItems);
-  const [comps, setComps] = useState<CompItem[]>(initialComps);
   const [result, setResult] = useState<DealEvaluationResponse | null>(null);
   const [aiReview, setAiReview] = useState<AiDealReviewResponse | null>(null);
   const [savedDeals, setSavedDeals] = useState<SavedDeal[]>([]);
@@ -260,14 +139,14 @@ export default function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
 
-  const analysis = useMemo(() => calculateAnalysis(form, rehabItems, comps), [form, rehabItems, comps]);
+  const analysis = useMemo(() => calculateAnalysis(form), [form]);
   const canSubmit = !isSubmitting;
   const dashboardSummary = useMemo(() => getDashboardSummary(savedDeals), [savedDeals]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const nextValidationError = getValidationError(form, rehabItems, comps);
+    const nextValidationError = getValidationError(form);
     if (nextValidationError) {
       setError(nextValidationError);
       return;
@@ -332,14 +211,11 @@ export default function App() {
       `Property: ${form.propertyAddress}`,
       `Purchase Price: ${currencyFormatter.format(toNumber(form.purchasePrice))}`,
       `ARV: ${currencyFormatter.format(toNumber(form.afterRepairValue))}`,
-      `Rehab Budget: ${currencyFormatter.format(analysis.repairCosts)}`,
       `MAO: ${currencyFormatter.format(analysis.maximumAllowableOffer)}`,
       `Projected Profit: ${currencyFormatter.format(analysis.projectedProfit)}`,
       `ROI: ${numberFormatter.format(analysis.roi)}%`,
       `Deal Score: ${analysis.dealScore} (${analysis.scoreGrade})`,
       `Risk Level: ${analysis.riskLevel}`,
-      `Financing: ${form.financingType}`,
-      `Rental Cash Flow: ${currencyFormatter.format(analysis.monthlyCashFlow)}`,
       `Recommendation: ${analysis.recommendation}`
     ];
     const blob = new Blob([createSimplePdf(lines)], { type: "application/pdf" });
@@ -363,7 +239,6 @@ export default function App() {
         property.lastSalePrice == null || current.purchasePrice
           ? current.purchasePrice
           : String(property.lastSalePrice),
-      subjectSquareFeet: livingArea == null ? current.subjectSquareFeet : String(livingArea),
       estimatedValue: estimatedValue == null ? "" : String(estimatedValue),
       lastSalePrice: property.lastSalePrice == null ? "" : String(property.lastSalePrice),
       lastSaleDate: property.lastSaleDate ?? "",
@@ -409,7 +284,7 @@ export default function App() {
                 Deal Analyzer
               </Typography>
               <Typography color="text.secondary" className="lede">
-                Model MAO, rehab, financing, rental fallback, comps, and risk in one worksheet.
+                Model MAO, property value, offer spread, projected profit, and risk in one worksheet.
               </Typography>
             </Box>
             <Box className="hero-metrics">
@@ -495,12 +370,6 @@ export default function App() {
                     value={form.profitBuffer}
                     onChange={(value) => setForm((current) => ({ ...current, profitBuffer: value }))}
                   />
-                  <NumberField
-                    label="Holding period"
-                    value={form.holdingMonths}
-                    suffix="months"
-                    onChange={(value) => setForm((current) => ({ ...current, holdingMonths: value }))}
-                  />
                 </Box>
 
                 <SectionHeader eyebrow="Property profile" title="RentCast autofill" />
@@ -547,248 +416,7 @@ export default function App() {
                     label="Living area"
                     value={form.livingArea}
                     suffix="sq ft"
-                    onChange={(value) =>
-                      setForm((current) => ({
-                        ...current,
-                        livingArea: value,
-                        subjectSquareFeet: value || current.subjectSquareFeet
-                      }))
-                    }
-                  />
-                </Box>
-
-                <SectionHeader eyebrow="Rehab budget" title="Editable repair breakdown" />
-                <Stack spacing={1.25}>
-                  {rehabItems.map((item) => (
-                    <Box className="editable-row" key={item.id}>
-                      <Select
-                        value={item.category}
-                        onChange={(event) =>
-                          setRehabItems((current) =>
-                            current.map((row) =>
-                              row.id === item.id ? { ...row, category: event.target.value } : row
-                            )
-                          )
-                        }
-                        size="small"
-                      >
-                        {rehabCategories.map((category) => (
-                          <MenuItem value={category} key={category}>
-                            {category}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                      <CurrencyField
-                        label="Estimated cost"
-                        value={item.estimatedCost}
-                        onChange={(value) =>
-                          setRehabItems((current) =>
-                            current.map((row) =>
-                              row.id === item.id ? { ...row, estimatedCost: value } : row
-                            )
-                          )
-                        }
-                      />
-                      <Button
-                        type="button"
-                        variant="text"
-                        color="error"
-                        onClick={() =>
-                          setRehabItems((current) => current.filter((row) => row.id !== item.id))
-                        }
-                        disabled={rehabItems.length === 1}
-                      >
-                        Remove
-                      </Button>
-                    </Box>
-                  ))}
-                  <Stack
-                    direction={{ xs: "column", sm: "row" }}
-                    spacing={1.5}
-                    alignItems={{ sm: "center" }}
-                    className="rehab-actions"
-                  >
-                    <Button
-                      type="button"
-                      variant="outlined"
-                      onClick={() =>
-                        setRehabItems((current) => [
-                          ...current,
-                          { id: Date.now(), category: "Other", estimatedCost: "" }
-                        ])
-                      }
-                    >
-                      Add Rehab Row
-                    </Button>
-                    <Typography className="inline-total">
-                      Total Rehab Budget: {currencyFormatter.format(analysis.repairCosts)}
-                    </Typography>
-                  </Stack>
-                </Stack>
-
-                <SectionHeader eyebrow="Financing" title="Purchase method and loan costs" />
-                <Box className="field-grid">
-                  <Box>
-                    <Typography className="field-label">Financing type</Typography>
-                    <Select
-                      value={form.financingType}
-                      onChange={(event) =>
-                        setForm((current) => ({
-                          ...current,
-                          financingType: event.target.value as DealFormState["financingType"]
-                        }))
-                      }
-                      fullWidth
-                    >
-                      <MenuItem value="Cash">Cash</MenuItem>
-                      <MenuItem value="Hard Money Loan">Hard Money Loan</MenuItem>
-                      <MenuItem value="Conventional Loan">Conventional Loan</MenuItem>
-                      <MenuItem value="Private Lender">Private Lender</MenuItem>
-                    </Select>
-                  </Box>
-                  {form.financingType === "Cash" ? (
-                    <ResultMetric label="Financing cost" value={currencyFormatter.format(0)} />
-                  ) : (
-                    <>
-                      <NumberField
-                        label="Down payment"
-                        value={form.downPaymentPercentage}
-                        suffix="%"
-                        onChange={(value) =>
-                          setForm((current) => ({ ...current, downPaymentPercentage: value }))
-                        }
-                      />
-                      <NumberField
-                        label="Interest rate"
-                        value={form.interestRate}
-                        suffix="%"
-                        onChange={(value) => setForm((current) => ({ ...current, interestRate: value }))}
-                      />
-                      <NumberField
-                        label="Points"
-                        value={form.points}
-                        suffix="%"
-                        onChange={(value) => setForm((current) => ({ ...current, points: value }))}
-                      />
-                      <NumberField
-                        label="Loan term"
-                        value={form.loanTermMonths}
-                        suffix="months"
-                        onChange={(value) =>
-                          setForm((current) => ({ ...current, loanTermMonths: value }))
-                        }
-                      />
-                    </>
-                  )}
-                </Box>
-                <Box className="result-grid">
-                  <ResultMetric label="Loan amount" value={currencyFormatter.format(analysis.loanAmount)} />
-                  <ResultMetric
-                    label="Monthly payment"
-                    value={currencyFormatter.format(analysis.monthlyPayment)}
-                  />
-                  <ResultMetric
-                    label="Interest during hold"
-                    value={currencyFormatter.format(analysis.totalInterestCost)}
-                  />
-                  <ResultMetric label="Points cost" value={currencyFormatter.format(analysis.pointsCost)} />
-                </Box>
-
-                <SectionHeader eyebrow="Rental backup analysis" title="Exit strategy fallback" />
-                <Box className="field-grid">
-                  <CurrencyField
-                    label="Monthly rent"
-                    value={form.monthlyRent}
-                    onChange={(value) => setForm((current) => ({ ...current, monthlyRent: value }))}
-                  />
-                  <CurrencyField
-                    label="Property tax"
-                    value={form.propertyTax}
-                    onChange={(value) => setForm((current) => ({ ...current, propertyTax: value }))}
-                  />
-                  <CurrencyField
-                    label="Insurance"
-                    value={form.insurance}
-                    onChange={(value) => setForm((current) => ({ ...current, insurance: value }))}
-                  />
-                  <CurrencyField
-                    label="HOA"
-                    value={form.hoa}
-                    onChange={(value) => setForm((current) => ({ ...current, hoa: value }))}
-                  />
-                  <CurrencyField
-                    label="Maintenance"
-                    value={form.maintenance}
-                    onChange={(value) => setForm((current) => ({ ...current, maintenance: value }))}
-                  />
-                  <NumberField
-                    label="Vacancy rate"
-                    value={form.vacancyRate}
-                    suffix="%"
-                    onChange={(value) => setForm((current) => ({ ...current, vacancyRate: value }))}
-                  />
-                  <NumberField
-                    label="Property management"
-                    value={form.propertyManagementFee}
-                    suffix="%"
-                    onChange={(value) =>
-                      setForm((current) => ({ ...current, propertyManagementFee: value }))
-                    }
-                  />
-                </Box>
-
-                <SectionHeader eyebrow="Florida costs" title="Optional local cost assumptions" />
-                <Box className="field-grid">
-                  <CurrencyField
-                    label="Property taxes"
-                    value={form.floridaPropertyTaxes}
-                    onChange={(value) =>
-                      setForm((current) => ({ ...current, floridaPropertyTaxes: value }))
-                    }
-                  />
-                  <CurrencyField
-                    label="Insurance"
-                    value={form.floridaInsurance}
-                    onChange={(value) =>
-                      setForm((current) => ({ ...current, floridaInsurance: value }))
-                    }
-                  />
-                  <CurrencyField
-                    label="HOA"
-                    value={form.floridaHoa}
-                    onChange={(value) => setForm((current) => ({ ...current, floridaHoa: value }))}
-                  />
-                  <NumberField
-                    label="Realtor commission"
-                    value={form.realtorCommissionPercentage}
-                    suffix="%"
-                    onChange={(value) =>
-                      setForm((current) => ({ ...current, realtorCommissionPercentage: value }))
-                    }
-                  />
-                  <CurrencyField
-                    label="Title fees"
-                    value={form.titleFees}
-                    onChange={(value) => setForm((current) => ({ ...current, titleFees: value }))}
-                  />
-                  <CurrencyField
-                    label="Transfer taxes"
-                    value={form.transferTaxes}
-                    onChange={(value) =>
-                      setForm((current) => ({ ...current, transferTaxes: value }))
-                    }
-                  />
-                  <CurrencyField
-                    label="Flood insurance"
-                    value={form.floodInsurance}
-                    onChange={(value) =>
-                      setForm((current) => ({ ...current, floodInsurance: value }))
-                    }
-                  />
-                  <CurrencyField
-                    label="Permits"
-                    value={form.permitCosts}
-                    onChange={(value) => setForm((current) => ({ ...current, permitCosts: value }))}
+                    onChange={(value) => setForm((current) => ({ ...current, livingArea: value }))}
                   />
                 </Box>
 
@@ -817,8 +445,6 @@ export default function App() {
               <DealScoreCard analysis={analysis} />
               <RiskMeter analysis={analysis} />
               <ResultPanel result={result} analysis={analysis} />
-              <RentalPanel analysis={analysis} />
-              <CompsPanel comps={comps} setComps={setComps} form={form} setForm={setForm} analysis={analysis} />
               <SensitivityPanel analysis={analysis} />
               <AiReviewPanel review={aiReview} error={aiError} />
               <DashboardPanel summary={dashboardSummary} savedDeals={savedDeals} />
@@ -893,7 +519,6 @@ function MaoCard({ analysis, form }: { analysis: DealAnalysis; form: DealFormSta
       <SectionHeader eyebrow="Maximum Allowable Offer" title="MAO analysis" />
       <Box className="result-grid">
         <ResultMetric label="ARV" value={currencyFormatter.format(toNumber(form.afterRepairValue))} />
-        <ResultMetric label="Repair cost" value={currencyFormatter.format(analysis.repairCosts)} />
         <ResultMetric label="MAO percentage" value={`${toNumber(form.maoRulePercentage)}%`} />
         <ResultMetric
           label="Calculated MAO"
@@ -973,119 +598,6 @@ function ResultPanel({
           className="section-chip"
         />
       ) : null}
-    </Paper>
-  );
-}
-
-function RentalPanel({ analysis }: { analysis: DealAnalysis }) {
-  return (
-    <Paper elevation={0} className="insight-card">
-      <SectionHeader eyebrow="Rental Backup Analysis" title="Hold scenario" />
-      <Box className="result-grid">
-        <ResultMetric label="Monthly cash flow" value={currencyFormatter.format(analysis.monthlyCashFlow)} />
-        <ResultMetric label="Cap rate" value={`${numberFormatter.format(analysis.capRate)}%`} />
-        <ResultMetric
-          label="Cash-on-cash return"
-          value={`${numberFormatter.format(analysis.cashOnCashReturn)}%`}
-        />
-        <ResultMetric label="DSCR" value={numberFormatter.format(analysis.dscr)} />
-      </Box>
-    </Paper>
-  );
-}
-
-function CompsPanel({
-  comps,
-  setComps,
-  form,
-  setForm,
-  analysis
-}: {
-  comps: CompItem[];
-  setComps: (updater: (current: CompItem[]) => CompItem[]) => void;
-  form: DealFormState;
-  setForm: (updater: (current: DealFormState) => DealFormState) => void;
-  analysis: DealAnalysis;
-}) {
-  return (
-    <Paper elevation={0} className="insight-card">
-      <SectionHeader eyebrow="Comparable sales" title="ARV support" />
-      <Box className="field-grid">
-        <NumberField
-          label="Subject square feet"
-          value={form.subjectSquareFeet}
-          suffix="sq ft"
-          onChange={(value) => setForm((current) => ({ ...current, subjectSquareFeet: value }))}
-        />
-        <ResultMetric
-          label="Estimated ARV from comps"
-          value={currencyFormatter.format(analysis.estimatedArvFromComps)}
-        />
-      </Box>
-      <Stack spacing={1.25} className="table-stack">
-        {comps.map((comp) => {
-          const pricePerSqFt = safeDivide(toNumber(comp.salePrice), toNumber(comp.squareFeet));
-          return (
-            <Box className="comp-row" key={comp.id}>
-              <TextField
-                label="Address"
-                value={comp.address}
-                onChange={(event) =>
-                  setComps((current) =>
-                    current.map((row) =>
-                      row.id === comp.id ? { ...row, address: event.target.value } : row
-                    )
-                  )
-                }
-              />
-              <CurrencyField
-                label="Sale price"
-                value={comp.salePrice}
-                onChange={(value) =>
-                  setComps((current) =>
-                    current.map((row) => (row.id === comp.id ? { ...row, salePrice: value } : row))
-                  )
-                }
-              />
-              <NumberField
-                label="Square feet"
-                value={comp.squareFeet}
-                suffix="sq ft"
-                onChange={(value) =>
-                  setComps((current) =>
-                    current.map((row) => (row.id === comp.id ? { ...row, squareFeet: value } : row))
-                  )
-                }
-              />
-              <ResultMetric label="$/sq ft" value={currencyFormatter.format(pricePerSqFt)} />
-            </Box>
-          );
-        })}
-        <Button
-          type="button"
-          variant="outlined"
-          onClick={() =>
-            setComps((current) => [
-              ...current,
-              {
-                id: Date.now(),
-                address: "",
-                salePrice: "",
-                squareFeet: "",
-                distanceMiles: "",
-                soldDate: "",
-                bedrooms: "",
-                bathrooms: ""
-              }
-            ])
-          }
-        >
-          Add Comp
-        </Button>
-      </Stack>
-      <Typography color="text.secondary">
-        Average price per square foot: {currencyFormatter.format(analysis.averagePricePerSqFt)}
-      </Typography>
     </Paper>
   );
 }
@@ -1230,85 +742,44 @@ function ResultMetric({ label, value }: { label: string; value: string }) {
   );
 }
 
-function calculateAnalysis(form: DealFormState, rehabItems: RehabItem[], comps: CompItem[]): DealAnalysis {
+function calculateAnalysis(form: DealFormState): DealAnalysis {
   const purchasePrice = toNumber(form.purchasePrice);
   const arv = toNumber(form.afterRepairValue);
   const maoRule = toNumber(form.maoRulePercentage) / 100 || 0.7;
-  const repairCosts = rehabItems.reduce((total, item) => total + toNumber(item.estimatedCost), 0);
+  const repairCosts = 0;
   const holdingAndSellingCosts = toNumber(form.holdingAndSellingCosts);
   const profitBuffer = toNumber(form.profitBuffer);
-  const holdingMonths = toNumber(form.holdingMonths);
   const maximumAllowableOffer = arv * maoRule - repairCosts;
   const priceVsMao = purchasePrice - maximumAllowableOffer;
   const isOfferAcceptable = purchasePrice <= maximumAllowableOffer;
-  const downPaymentPercentage = form.financingType === "Cash" ? 100 : toNumber(form.downPaymentPercentage);
-  const loanAmount = Math.max(0, purchasePrice * (1 - downPaymentPercentage / 100));
-  const monthlyRate = toNumber(form.interestRate) / 100 / 12;
-  const loanTermMonths = Math.max(1, toNumber(form.loanTermMonths));
-  const monthlyPayment =
-    form.financingType === "Cash" || monthlyRate === 0
-      ? 0
-      : loanAmount * (monthlyRate / (1 - Math.pow(1 + monthlyRate, -loanTermMonths)));
-  const totalInterestCost = form.financingType === "Cash" ? 0 : loanAmount * monthlyRate * holdingMonths;
-  const pointsCost = form.financingType === "Cash" ? 0 : loanAmount * (toNumber(form.points) / 100);
+  const loanAmount = 0;
+  const monthlyPayment = 0;
+  const totalInterestCost = 0;
+  const pointsCost = 0;
   const totalFinancingCost = totalInterestCost + pointsCost;
-  const floridaCosts =
-    toNumber(form.floridaPropertyTaxes) +
-    toNumber(form.floridaInsurance) +
-    toNumber(form.floridaHoa) +
-    toNumber(form.titleFees) +
-    toNumber(form.transferTaxes) +
-    toNumber(form.floodInsurance) +
-    toNumber(form.permitCosts);
-  const realtorCost = arv * (toNumber(form.realtorCommissionPercentage) / 100);
-  const totalProjectCost =
-    purchasePrice + repairCosts + holdingAndSellingCosts + totalFinancingCost + floridaCosts + realtorCost;
+  const totalProjectCost = purchasePrice + repairCosts + holdingAndSellingCosts + totalFinancingCost;
   const projectedProfit = arv - totalProjectCost;
   const cashInvested = Math.max(1, purchasePrice - loanAmount + repairCosts + pointsCost);
   const roi = (projectedProfit / cashInvested) * 100;
   const profitMargin = safeDivide(projectedProfit, arv) * 100;
-  const rehabCostPercentage = safeDivide(repairCosts, arv) * 100;
   const score = getDealScore({
     profitMargin,
     roi,
     isOfferAcceptable,
-    rehabCostPercentage,
-    holdingMonths,
-    totalFinancingCost,
     holdingAndSellingCosts
   });
   const riskReasons = getRiskReasons({
     profitMargin,
-    rehabCostPercentage,
-    holdingMonths,
-    totalFinancingCost,
     isOfferAcceptable
   });
   const riskLevel = riskReasons.length >= 4 ? "High" : riskReasons.length >= 2 ? "Medium" : "Low";
-  const monthlyMortgage = monthlyPayment;
-  const monthlyRent = toNumber(form.monthlyRent);
-  const monthlyExpenses =
-    monthlyMortgage +
-    toNumber(form.propertyTax) +
-    toNumber(form.insurance) +
-    toNumber(form.hoa) +
-    toNumber(form.maintenance) +
-    monthlyRent * (toNumber(form.vacancyRate) / 100) +
-    monthlyRent * (toNumber(form.propertyManagementFee) / 100);
-  const monthlyCashFlow = monthlyRent - monthlyExpenses;
-  const annualCashFlow = monthlyCashFlow * 12;
-  const annualNoi = (monthlyRent - monthlyExpenses + monthlyMortgage) * 12;
-  const capRate = safeDivide(annualNoi, arv) * 100;
-  const cashOnCashReturn = safeDivide(annualCashFlow, cashInvested) * 100;
-  const dscr = safeDivide(annualNoi, monthlyMortgage * 12);
-  const validComps = comps.filter((comp) => toNumber(comp.salePrice) > 0 && toNumber(comp.squareFeet) > 0);
-  const averagePricePerSqFt = validComps.length
-    ? validComps.reduce(
-        (total, comp) => total + safeDivide(toNumber(comp.salePrice), toNumber(comp.squareFeet)),
-        0
-      ) / validComps.length
-    : 0;
-  const estimatedArvFromComps = toNumber(form.subjectSquareFeet) * averagePricePerSqFt;
+  const monthlyCashFlow = 0;
+  const annualCashFlow = 0;
+  const capRate = 0;
+  const cashOnCashReturn = 0;
+  const dscr = 0;
+  const averagePricePerSqFt = 0;
+  const estimatedArvFromComps = 0;
   const sensitivity = [
     getScenario("Best Case", arv * 1.05, repairCosts * 0.9, repairCosts, totalProjectCost, cashInvested),
     getScenario("Expected Case", arv, repairCosts, repairCosts, totalProjectCost, cashInvested),
@@ -1365,26 +836,17 @@ function getDealScore({
   profitMargin,
   roi,
   isOfferAcceptable,
-  rehabCostPercentage,
-  holdingMonths,
-  totalFinancingCost,
   holdingAndSellingCosts
 }: {
   profitMargin: number;
   roi: number;
   isOfferAcceptable: boolean;
-  rehabCostPercentage: number;
-  holdingMonths: number;
-  totalFinancingCost: number;
   holdingAndSellingCosts: number;
 }) {
   let score = 100;
   if (profitMargin < 15) score -= 20;
   if (roi < 12) score -= 15;
   if (!isOfferAcceptable) score -= 15;
-  if (rehabCostPercentage > 25) score -= 10;
-  if (holdingMonths > 6) score -= 10;
-  if (totalFinancingCost > 15000) score -= 7;
   if (holdingAndSellingCosts > 25000) score -= 5;
   return Math.max(0, Math.min(100, Math.round(score)));
 }
@@ -1407,27 +869,18 @@ function getRecommendation(score: number) {
 
 function getRiskReasons({
   profitMargin,
-  rehabCostPercentage,
-  holdingMonths,
-  totalFinancingCost,
   isOfferAcceptable
 }: {
   profitMargin: number;
-  rehabCostPercentage: number;
-  holdingMonths: number;
-  totalFinancingCost: number;
   isOfferAcceptable: boolean;
 }) {
   const reasons: string[] = [];
   if (profitMargin < 15) reasons.push("Profit margin is below 15%.");
-  if (rehabCostPercentage > 25) reasons.push("Rehab budget is more than 25% of ARV.");
-  if (holdingMonths > 6) reasons.push("Holding period is longer than 6 months.");
-  if (totalFinancingCost > 15000) reasons.push("Financing costs are above $15,000.");
   if (!isOfferAcceptable) reasons.push("Purchase price is above MAO.");
   return reasons;
 }
 
-function getValidationError(form: DealFormState, rehabItems: RehabItem[], comps: CompItem[]): string | null {
+function getValidationError(form: DealFormState): string | null {
   if (!isPositiveNumber(form.afterRepairValue)) return "After-repair value must be greater than zero.";
   if (!isNonNegativeNumber(form.purchasePrice)) return "Purchase price must be zero or greater.";
   if (!isPositiveNumber(form.maoRulePercentage)) return "MAO percentage must be greater than zero.";
@@ -1435,13 +888,6 @@ function getValidationError(form: DealFormState, rehabItems: RehabItem[], comps:
     return "Holding and selling costs must be zero or greater.";
   }
   if (!isNonNegativeNumber(form.profitBuffer)) return "Profit buffer must be zero or greater.";
-  if (!rehabItems.every((item) => isNonNegativeNumber(item.estimatedCost))) {
-    return "Every rehab row must have a cost of zero or greater.";
-  }
-  if (comps.length < 3) return "Add at least 3 comparable sales.";
-  if (!comps.every((comp) => isNonNegativeNumber(comp.salePrice) && isNonNegativeNumber(comp.squareFeet))) {
-    return "Every comp must have valid sale price and square footage values.";
-  }
   return null;
 }
 
