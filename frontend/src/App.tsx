@@ -25,7 +25,6 @@ type DealFormState = {
   afterRepairValue: string;
   maoRulePercentage: string;
   holdingAndSellingCosts: string;
-  profitBuffer: string;
   estimatedValue: string;
   lastSalePrice: string;
   lastSaleDate: string;
@@ -81,7 +80,6 @@ const initialFormState: DealFormState = {
   afterRepairValue: "",
   maoRulePercentage: "",
   holdingAndSellingCosts: "",
-  profitBuffer: "",
   estimatedValue: "",
   lastSalePrice: "",
   lastSaleDate: "",
@@ -327,16 +325,11 @@ export default function App() {
                     }
                   />
                   <CurrencyField
-                    label="Holding and selling costs"
+                    label="Reparation and selling cost"
                     value={form.holdingAndSellingCosts}
                     onChange={(value) =>
                       setForm((current) => ({ ...current, holdingAndSellingCosts: value }))
                     }
-                  />
-                  <CurrencyField
-                    label="Profit buffer"
-                    value={form.profitBuffer}
-                    onChange={(value) => setForm((current) => ({ ...current, profitBuffer: value }))}
                   />
                 </Box>
 
@@ -664,7 +657,6 @@ function calculateAnalysis(form: DealFormState): DealAnalysis {
   const maoRule = toNumber(form.maoRulePercentage) / 100 || 0.7;
   const repairCosts = 0;
   const holdingAndSellingCosts = toNumber(form.holdingAndSellingCosts);
-  const profitBuffer = toNumber(form.profitBuffer);
   const maximumAllowableOffer = arv * maoRule - repairCosts;
   const priceVsMao = purchasePrice - maximumAllowableOffer;
   const isOfferAcceptable = purchasePrice <= maximumAllowableOffer;
@@ -801,9 +793,8 @@ function getValidationError(form: DealFormState): string | null {
   if (!isNonNegativeNumber(form.purchasePrice)) return "Purchase price must be zero or greater.";
   if (!isPositiveNumber(form.maoRulePercentage)) return "MAO percentage must be greater than zero.";
   if (!isNonNegativeNumber(form.holdingAndSellingCosts)) {
-    return "Holding and selling costs must be zero or greater.";
+    return "Reparation and selling cost must be zero or greater.";
   }
-  if (!isNonNegativeNumber(form.profitBuffer)) return "Profit buffer must be zero or greater.";
   return null;
 }
 
@@ -825,8 +816,7 @@ function toRequest(form: DealFormState, analysis: DealAnalysis): DealEvaluationR
     rehabCosts: analysis.repairCosts,
     financingCosts: analysis.totalFinancingCost,
     holdingCosts: toNumber(form.holdingAndSellingCosts),
-    sellingCosts: 0,
-    profitBuffer: toNumber(form.profitBuffer)
+    sellingCosts: 0
   };
 }
 

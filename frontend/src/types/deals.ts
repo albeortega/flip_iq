@@ -6,7 +6,6 @@ export type DealEvaluationRequest = {
   financingCosts: number;
   holdingCosts: number;
   sellingCosts: number;
-  profitBuffer: number;
 };
 
 export type DealEvaluationResponse = {
@@ -19,7 +18,6 @@ export type DealEvaluationResponse = {
   financingCosts: number;
   holdingCosts: number;
   sellingCosts: number;
-  profitBuffer: number;
   totalProjectCost: number;
   maximumOffer: number;
   projectedProfit: number;
