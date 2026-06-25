@@ -120,7 +120,7 @@ export default function App() {
   const [isAiLoading, setIsAiLoading] = useState(false);
 
   const analysis = useMemo(() => calculateAnalysis(form), [form]);
-  const hasAnalysisStarted = Boolean(form.formattedAddress || isValidZipCode(form.zipCode));
+  const hasAnalysisStarted = Boolean(form.formattedAddress);
   const canSubmit = !isSubmitting;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -825,8 +825,8 @@ function getRiskReasons({
 }
 
 function getValidationError(form: DealFormState): string | null {
-  if (!form.propertyAddress.trim() && !isValidZipCode(form.zipCode)) {
-    return "Select a property address or enter a valid ZIP code.";
+  if (!form.propertyAddress.trim()) {
+    return "Select a property address.";
   }
   if (!isPositiveNumber(form.afterRepairValue)) return "After-repair value must be greater than zero.";
   if (!isNonNegativeNumber(form.purchasePrice)) return "Purchase price must be zero or greater.";
@@ -847,13 +847,9 @@ function isNonNegativeNumber(value: string): boolean {
   return value.trim() !== "" && Number.isFinite(parsed) && parsed >= 0;
 }
 
-function isValidZipCode(value: string): boolean {
-  return /^\d{5}$/.test(value.trim());
-}
-
 function toRequest(form: DealFormState, analysis: DealAnalysis): DealEvaluationRequest {
   return {
-    propertyAddress: form.propertyAddress.trim() || form.zipCode.trim(),
+    propertyAddress: form.propertyAddress.trim(),
     purchasePrice: toNumber(form.purchasePrice),
     afterRepairValue: toNumber(form.afterRepairValue),
     rehabCosts: analysis.repairCosts,
