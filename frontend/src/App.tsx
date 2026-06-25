@@ -382,21 +382,27 @@ export default function App() {
   }
 
   function handleAnalyzeOpportunity(property: FlipOpportunityProperty) {
+    const holdingAndSellingCosts = nullableSum(
+      property.estimatedRehabCost,
+      property.closingCosts,
+      property.holdingCosts
+    );
+
     setAnalysisMode("address");
     setZipOpportunities(null);
     setZipError(null);
     setForm((current) => ({
       ...current,
       propertyAddress: property.address,
-      purchasePrice: String(property.listPrice),
-      afterRepairValue: String(property.estimatedValue),
-      holdingAndSellingCosts: String(property.estimatedRehabCost + property.closingCosts + property.holdingCosts),
-      estimatedValue: String(property.estimatedValue),
+      purchasePrice: toOptionalString(property.listPrice),
+      afterRepairValue: toOptionalString(property.estimatedValue),
+      holdingAndSellingCosts: toOptionalString(holdingAndSellingCosts),
+      estimatedValue: toOptionalString(property.estimatedValue),
       lastSalePrice: "",
       lastSaleDate: "",
       bedrooms: property.bedrooms == null ? "" : String(property.bedrooms),
       bathrooms: property.bathrooms == null ? "" : String(property.bathrooms),
-      livingArea: String(property.livingArea),
+      livingArea: toOptionalString(property.livingArea),
       googlePlaceId: "",
       formattedAddress: property.address,
       streetNumber: "",
@@ -725,7 +731,9 @@ function FlipOpportunityCard({
             />
             <Typography className="opportunity-rank">#{rank} Best Flip Deal</Typography>
           </Stack>
-          <Typography className="opportunity-score">Flip Score: {property.flipScore}/100</Typography>
+          <Typography className="opportunity-score">
+            Flip Score: {property.flipScore == null ? "N/A" : `${property.flipScore}/100`}
+          </Typography>
         </Stack>
 
         <Box>
@@ -736,12 +744,12 @@ function FlipOpportunityCard({
         </Box>
 
         <Box className="opportunity-metrics">
-          <ResultMetric label="List Price" value={currencyFormatter.format(property.listPrice)} />
-          <ResultMetric label="Estimated Value" value={currencyFormatter.format(property.estimatedValue)} />
-          <ResultMetric label="Estimated Profit" value={currencyFormatter.format(property.estimatedProfit)} />
-          <ResultMetric label="ROI" value={`${numberFormatter.format(property.roiPercent)}%`} />
-          <ResultMetric label="Discount" value={`${numberFormatter.format(property.discountPercent)}%`} />
-          <ResultMetric label="Price Drop" value={currencyFormatter.format(property.priceDropAmount)} />
+          <ResultMetric label="List Price" value={formatCurrencyValue(property.listPrice)} />
+          <ResultMetric label="Estimated Value" value={formatCurrencyValue(property.estimatedValue)} />
+          <ResultMetric label="Estimated Profit" value={formatCurrencyValue(property.estimatedProfit)} />
+          <ResultMetric label="ROI" value={formatPercentValue(property.roiPercent)} />
+          <ResultMetric label="Discount" value={formatPercentValue(property.discountPercent)} />
+          <ResultMetric label="Price Drop" value={formatCurrencyValue(property.priceDropAmount)} />
         </Box>
 
         <Stack spacing={0.6}>
@@ -1209,7 +1217,27 @@ function recommendationClass(recommendation: string) {
   if (recommendation === "Strong Flip Candidate") return "opportunity-badge-strong";
   if (recommendation === "Good Deal") return "opportunity-badge-good";
   if (recommendation === "Maybe") return "opportunity-badge-maybe";
+  if (recommendation === "Needs Review") return "opportunity-badge-maybe";
   return "opportunity-badge-avoid";
+}
+
+function formatCurrencyValue(value: number | null): string {
+  return value == null ? "N/A" : currencyFormatter.format(value);
+}
+
+function formatPercentValue(value: number | null): string {
+  return value == null ? "N/A" : `${numberFormatter.format(value)}%`;
+}
+
+function toOptionalString(value: number | null): string {
+  return value == null ? "" : String(value);
+}
+
+function nullableSum(...values: Array<number | null>): number | null {
+  if (values.some((value) => value == null)) {
+    return null;
+  }
+  return values.reduce<number>((total, value) => total + (value ?? 0), 0);
 }
 
 function toNumber(value: string): number {
